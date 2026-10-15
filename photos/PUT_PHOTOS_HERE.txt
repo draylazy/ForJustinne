@@ -1,0 +1,11 @@
+Put your photos here!
+
+Examples of how to name and organize them:
+- us.jpg (for the Home hero picture)
+- month1.jpg, month2.jpg, ... month12.jpg (for the 12 Monthsary cards)
+- moment1.jpg, moment2.jpg, ... (for the Moments Polaroid gallery)
+
+Then in index.html, replace ph("...") with:
+"photos/us.jpg"
+"photos/month1.jpg"
+etc.

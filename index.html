@@ -1,0 +1,3560 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>dray x jnstiuue · Our Little Scrapbook</title>
+  <meta name="description"
+    content="A digital scrapbook of our monthsaries, little moments, and all the reasons I love you." />
+  <meta name="theme-color" content="#9CAF88" />
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500;1,600&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap"
+    rel="stylesheet" />
+
+  <!-- Confetti library -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js" defer></script>
+
+  <style>
+    /* =========================================================
+       DESIGN TOKENS
+       ========================================================= */
+    :root {
+      --sage: #9CAF88;
+      --sage-deep: #7A9168;
+      --sage-dark: #5E7550;
+      --mint: #E2F0CB;
+      --mint-2: #B5EAD7;
+      --cream: #FAF9F6;
+      --white: #FFFFFF;
+      --forest: #2C3E35;
+      --forest-soft: rgba(44, 62, 53, .68);
+      --blush: #F3C9C4;
+
+      --font-serif: "Playfair Display", Georgia, serif;
+      --font-sans: "Plus Jakarta Sans", system-ui, sans-serif;
+      --font-hand: "Caveat", cursive;
+
+      --radius-sm: 12px;
+      --radius: 22px;
+      --radius-lg: 32px;
+      --shadow-sm: 0 4px 14px -6px rgba(44, 62, 53, .18);
+      --shadow: 0 14px 40px -16px rgba(44, 62, 53, .28);
+      --shadow-lg: 0 30px 70px -24px rgba(44, 62, 53, .38);
+      --glass: rgba(255, 255, 255, .62);
+      --glass-border: rgba(255, 255, 255, .85);
+      --ease: cubic-bezier(.22, 1, .36, 1);
+      --ease-bounce: cubic-bezier(.34, 1.56, .64, 1);
+    }
+
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+      -webkit-text-size-adjust: 100%;
+    }
+
+    body {
+      margin: 0;
+      font-family: var(--font-sans);
+      color: var(--forest);
+      background:
+        radial-gradient(1200px 600px at 10% -10%, rgba(181, 234, 215, .55), transparent 60%),
+        radial-gradient(900px 500px at 110% 10%, rgba(226, 240, 203, .8), transparent 60%),
+        radial-gradient(800px 600px at 50% 120%, rgba(156, 175, 136, .25), transparent 60%),
+        var(--cream);
+      background-attachment: fixed;
+      min-height: 100vh;
+      line-height: 1.6;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    body.is-loading,
+    body.no-scroll {
+      overflow: hidden;
+    }
+
+    img {
+      max-width: 100%;
+      display: block;
+    }
+
+    button {
+      font: inherit;
+      color: inherit;
+    }
+
+    :focus-visible {
+      outline: 3px solid var(--sage);
+      outline-offset: 3px;
+      border-radius: 8px;
+    }
+
+    .glass {
+      background: var(--glass);
+      backdrop-filter: blur(18px) saturate(140%);
+      -webkit-backdrop-filter: blur(18px) saturate(140%);
+      border: 1px solid var(--glass-border);
+      box-shadow: var(--shadow);
+    }
+
+    /* =========================================================
+       FLOATING PARTICLES
+       ========================================================= */
+    .particles {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      overflow: hidden;
+    }
+
+    .particle {
+      position: absolute;
+      bottom: -40px;
+      width: var(--size);
+      height: var(--size);
+      color: var(--c);
+      opacity: 0;
+      animation: floatUp var(--dur) linear infinite;
+      animation-delay: var(--delay);
+    }
+
+    .particle svg {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+
+    @keyframes floatUp {
+      0% {
+        transform: translate3d(0, 0, 0) rotate(0deg);
+        opacity: 0;
+      }
+
+      10% {
+        opacity: var(--o);
+      }
+
+      90% {
+        opacity: var(--o);
+      }
+
+      100% {
+        transform: translate3d(var(--drift), -115vh, 0) rotate(var(--rot));
+        opacity: 0;
+      }
+    }
+
+    /* =========================================================
+       LOADER / INTRO
+       ========================================================= */
+    #loader {
+      position: fixed;
+      inset: 0;
+      z-index: 1000;
+      display: grid;
+      place-items: center;
+      padding: 24px;
+    }
+
+    .curtain {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      width: 50.5%;
+      transition: transform 1.3s cubic-bezier(.77, 0, .18, 1);
+    }
+
+    .curtain.left {
+      left: 0;
+      background: linear-gradient(100deg, #8CA078, var(--sage) 70%, #A6B893);
+    }
+
+    .curtain.right {
+      right: 0;
+      background: linear-gradient(-100deg, #8CA078, var(--sage) 70%, #A6B893);
+    }
+
+    #loader.opening .curtain.left {
+      transform: translateX(-101%);
+    }
+
+    #loader.opening .curtain.right {
+      transform: translateX(101%);
+    }
+
+    #loader .particles {
+      position: absolute;
+      z-index: 1;
+      transition: opacity .6s;
+    }
+
+    #loader.opening .particles {
+      opacity: 0;
+    }
+
+    .loader-content {
+      position: relative;
+      z-index: 2;
+      text-align: center;
+      color: var(--white);
+      transition: opacity .55s var(--ease), transform .7s var(--ease);
+    }
+
+    #loader.opening .loader-content {
+      opacity: 0;
+      transform: scale(.92) translateY(-10px);
+    }
+
+    .loader-heart {
+      width: 70px;
+      height: 70px;
+      margin: 0 auto 22px;
+      position: relative;
+      display: grid;
+      place-items: center;
+    }
+
+    .loader-heart svg {
+      width: 46px;
+      height: 46px;
+      color: #fff;
+      animation: heartbeat 1.4s ease-in-out infinite;
+      filter: drop-shadow(0 0 12px rgba(255, 255, 255, .7));
+    }
+
+    .loader-heart::before,
+    .loader-heart::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border-radius: 50%;
+      border: 2px solid rgba(255, 255, 255, .6);
+      animation: ripple 2.2s ease-out infinite;
+    }
+
+    .loader-heart::after {
+      animation-delay: 1.1s;
+    }
+
+    @keyframes heartbeat {
+
+      0%,
+      100% {
+        transform: scale(1);
+      }
+
+      15% {
+        transform: scale(1.18);
+      }
+
+      30% {
+        transform: scale(.96);
+      }
+
+      45% {
+        transform: scale(1.12);
+      }
+    }
+
+    @keyframes ripple {
+      0% {
+        transform: scale(.6);
+        opacity: .9;
+      }
+
+      100% {
+        transform: scale(1.9);
+        opacity: 0;
+      }
+    }
+
+    .type-line {
+      font-family: var(--font-serif);
+      font-style: italic;
+      font-weight: 500;
+      font-size: clamp(2.3rem, 10vw, 5rem);
+      letter-spacing: .01em;
+      line-height: 1.1;
+      margin: 0;
+      min-height: 1.2em;
+      text-shadow: 0 2px 30px rgba(255, 255, 255, .35);
+    }
+
+    .caret {
+      display: inline-block;
+      width: 3px;
+      height: .85em;
+      margin-left: 6px;
+      background: #fff;
+      vertical-align: -.08em;
+      border-radius: 2px;
+      animation: blink 1s steps(1) infinite;
+    }
+
+    @keyframes blink {
+      50% {
+        opacity: 0;
+      }
+    }
+
+    #loader.typed .type-line {
+      animation: glow 2.6s ease-in-out infinite alternate;
+    }
+
+    #loader.typed .caret {
+      opacity: 0;
+      animation: none;
+      transition: opacity .4s;
+    }
+
+    @keyframes glow {
+      from {
+        text-shadow: 0 0 10px rgba(255, 255, 255, .35), 0 0 30px rgba(226, 240, 203, .25);
+      }
+
+      to {
+        text-shadow: 0 0 22px rgba(255, 255, 255, .75), 0 0 60px rgba(226, 240, 203, .6);
+      }
+    }
+
+    .loader-sub {
+      font-family: var(--font-hand);
+      font-size: clamp(1.3rem, 4.5vw, 1.7rem);
+      margin: 14px 0 32px;
+      opacity: 0;
+      transform: translateY(12px);
+      transition: all .9s var(--ease) .2s;
+    }
+
+    #openBtn {
+      opacity: 0;
+      transform: translateY(14px) scale(.96);
+      pointer-events: none;
+      transition: all .9s var(--ease-bounce) .55s;
+    }
+
+    #loader.typed .loader-sub {
+      opacity: .95;
+      transform: none;
+    }
+
+    #loader.typed #openBtn {
+      opacity: 1;
+      transform: none;
+      pointer-events: auto;
+    }
+
+    /* =========================================================
+       BUTTONS & CHIPS
+       ========================================================= */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      border: 0;
+      cursor: pointer;
+      padding: 15px 30px;
+      border-radius: 999px;
+      font-weight: 600;
+      font-size: 1rem;
+      letter-spacing: .01em;
+      transition: transform .35s var(--ease-bounce), box-shadow .35s var(--ease), background .3s;
+      position: relative;
+      overflow: hidden;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .btn:active {
+      transform: scale(.96);
+    }
+
+    .btn::after {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: -120%;
+      width: 60%;
+      height: 100%;
+      background: linear-gradient(110deg, transparent, rgba(255, 255, 255, .55), transparent);
+      transform: skewX(-20deg);
+      transition: left .8s var(--ease);
+    }
+
+    .btn:hover::after {
+      left: 140%;
+    }
+
+    .btn-light {
+      background: var(--white);
+      color: var(--forest);
+      box-shadow: 0 14px 34px -10px rgba(30, 50, 35, .45);
+    }
+
+    .btn-light:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 20px 40px -12px rgba(30, 50, 35, .5);
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--sage), var(--sage-deep));
+      color: var(--white);
+      box-shadow: 0 14px 30px -12px rgba(94, 117, 80, .7);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 20px 36px -12px rgba(94, 117, 80, .75);
+    }
+
+    .btn-ghost {
+      background: rgba(255, 255, 255, .7);
+      color: var(--sage-dark);
+      border: 1px solid rgba(156, 175, 136, .35);
+    }
+
+    .btn-ghost:hover {
+      background: var(--white);
+      transform: translateY(-2px);
+    }
+
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 7px 16px;
+      border-radius: 999px;
+      background: var(--mint);
+      color: var(--sage-dark);
+      font-size: .8rem;
+      font-weight: 600;
+      letter-spacing: .04em;
+      text-transform: uppercase;
+      border: 1px solid rgba(156, 175, 136, .25);
+    }
+
+    /* =========================================================
+       LAYOUT
+       ========================================================= */
+    .topbar {
+      position: relative;
+      z-index: 5;
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 20px 20px 0;
+      display: flex;
+      align-items: center;
+    }
+
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-family: var(--font-serif);
+      font-style: italic;
+      font-size: 1.25rem;
+      color: var(--forest);
+      text-decoration: none;
+      background: none;
+      border: 0;
+      cursor: pointer;
+      padding: 0;
+    }
+
+    .brand svg {
+      width: 18px;
+      height: 18px;
+      color: var(--sage-deep);
+      animation: heartbeat 2s ease-in-out infinite;
+    }
+
+    main {
+      position: relative;
+      z-index: 2;
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 28px 18px 140px;
+    }
+
+    .view {
+      display: none;
+    }
+
+    .view.active {
+      display: block;
+    }
+
+    body.revealed .view.active .reveal {
+      animation: fadeUp .9s var(--ease) both;
+      animation-delay: calc(var(--i, 0) * 90ms);
+    }
+
+    @keyframes fadeUp {
+      from {
+        opacity: 0;
+        translate: 0 26px;
+      }
+
+      to {
+        opacity: 1;
+        translate: 0 0;
+      }
+    }
+
+    .section-head {
+      text-align: center;
+      max-width: 620px;
+      margin: 10px auto 40px;
+    }
+
+    .script-eyebrow {
+      font-family: var(--font-hand);
+      font-size: 1.6rem;
+      color: var(--sage-deep);
+      line-height: 1;
+      display: block;
+      margin-bottom: 6px;
+    }
+
+    .section-head h2 {
+      font-family: var(--font-serif);
+      font-weight: 600;
+      font-size: clamp(2rem, 6.5vw, 3.2rem);
+      line-height: 1.12;
+      margin: 0 0 12px;
+    }
+
+    .section-head h2 em {
+      color: var(--sage-deep);
+    }
+
+    .section-head p {
+      color: var(--forest-soft);
+      margin: 0;
+    }
+
+    /* =========================================================
+       TAB 1: HOME
+       ========================================================= */
+    .hero {
+      display: grid;
+      gap: 40px;
+      align-items: center;
+      padding: 16px 0 50px;
+    }
+
+    .hero-text {
+      text-align: center;
+    }
+
+    .hero h1 {
+      font-family: var(--font-serif);
+      font-weight: 600;
+      font-size: clamp(2.6rem, 9vw, 4.6rem);
+      line-height: 1.05;
+      margin: 18px 0 18px;
+      letter-spacing: -.01em;
+    }
+
+    .hero h1 em {
+      font-style: italic;
+      color: var(--sage-deep);
+      background: linear-gradient(transparent 68%, rgba(181, 234, 215, .9) 68%, rgba(181, 234, 215, .9) 92%, transparent 92%);
+      padding: 0 .08em;
+    }
+
+    .hero-sub {
+      font-size: 1.08rem;
+      color: var(--forest-soft);
+      max-width: 480px;
+      margin: 0 auto 28px;
+    }
+
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      justify-content: center;
+    }
+
+    .hero-photo-wrap {
+      position: relative;
+      width: min(330px, 76vw);
+      aspect-ratio: 1;
+      margin: 0 auto;
+    }
+
+    .hero-photo-wrap::before {
+      content: "";
+      position: absolute;
+      inset: -18px;
+      border-radius: 50%;
+      border: 2px dashed rgba(156, 175, 136, .6);
+      animation: spin 40s linear infinite;
+    }
+
+    .hero-photo-wrap::after {
+      content: "";
+      position: absolute;
+      inset: -40px;
+      border-radius: 50%;
+      z-index: -1;
+      background: radial-gradient(circle, rgba(181, 234, 215, .7), transparent 70%);
+    }
+
+    .hero-photo {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 50%;
+      border: 8px solid var(--white);
+      box-shadow: var(--shadow-lg);
+    }
+
+    .orbit {
+      position: absolute;
+      color: var(--sage-deep);
+      filter: drop-shadow(0 4px 8px rgba(44, 62, 53, .18));
+      animation: bob 4s ease-in-out infinite;
+    }
+
+    .orbit svg {
+      width: 100%;
+      height: 100%;
+    }
+
+    .orbit.o1 {
+      width: 38px;
+      top: 2%;
+      right: 4%;
+    }
+
+    .orbit.o2 {
+      width: 26px;
+      bottom: 10%;
+      left: -2%;
+      color: var(--blush);
+      animation-delay: -1.3s;
+    }
+
+    .orbit.o3 {
+      width: 30px;
+      bottom: -2%;
+      right: 18%;
+      color: var(--sage);
+      animation-delay: -2.4s;
+    }
+
+    .hero-sticker {
+      position: absolute;
+      left: -6%;
+      top: 10%;
+      background: var(--white);
+      padding: 8px 16px;
+      border-radius: 14px;
+      font-family: var(--font-hand);
+      font-size: 1.35rem;
+      color: var(--sage-dark);
+      box-shadow: var(--shadow);
+      --rr: -8deg;
+      animation: bob 5s ease-in-out infinite;
+    }
+
+    @keyframes bob {
+
+      0%,
+      100% {
+        transform: translateY(0) rotate(var(--rr, 0deg));
+      }
+
+      50% {
+        transform: translateY(-10px) rotate(var(--rr, 0deg));
+      }
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    .stats {
+      display: grid;
+      gap: 20px;
+    }
+
+    .card {
+      border-radius: var(--radius-lg);
+      padding: 28px 24px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .counter-card {
+      text-align: center;
+    }
+
+    .counter-card .label {
+      font-weight: 600;
+      color: var(--forest-soft);
+      font-size: .95rem;
+      margin: 0;
+    }
+
+    .big-days {
+      font-family: var(--font-serif);
+      font-weight: 700;
+      font-size: clamp(4.2rem, 18vw, 7rem);
+      line-height: 1;
+      margin: 10px 0 0;
+      background: linear-gradient(135deg, var(--sage-dark), var(--sage) 60%, #8FCFB5);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .big-days-label {
+      font-family: var(--font-hand);
+      font-size: 1.9rem;
+      color: var(--sage-deep);
+      margin: -4px 0 18px;
+    }
+
+    .units {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+    }
+
+    .unit {
+      background: rgba(255, 255, 255, .75);
+      border-radius: 16px;
+      padding: 12px 8px;
+      border: 1px solid rgba(156, 175, 136, .2);
+    }
+
+    .unit strong {
+      display: block;
+      font-family: var(--font-serif);
+      font-size: 1.35rem;
+      font-variant-numeric: tabular-nums;
+      line-height: 1.2;
+    }
+
+    .unit span {
+      font-size: .72rem;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      color: var(--forest-soft);
+      font-weight: 600;
+    }
+
+    .since {
+      margin: 18px 0 0;
+      font-size: .9rem;
+      color: var(--forest-soft);
+    }
+
+    .since b {
+      color: var(--sage-dark);
+    }
+
+    .next-card {
+      background: linear-gradient(150deg, var(--mint) 0%, var(--mint-2) 100%);
+      box-shadow: var(--shadow);
+      border: 1px solid rgba(255, 255, 255, .8);
+    }
+
+    .next-card .icon-badge {
+      width: 52px;
+      height: 52px;
+      border-radius: 16px;
+      display: grid;
+      place-items: center;
+      background: var(--white);
+      color: var(--sage-deep);
+      box-shadow: var(--shadow-sm);
+      margin-bottom: 18px;
+    }
+
+    .next-card .icon-badge svg {
+      width: 26px;
+      height: 26px;
+    }
+
+    .next-card h3 {
+      font-family: var(--font-serif);
+      font-size: 1.5rem;
+      margin: 0 0 4px;
+    }
+
+    .next-days {
+      font-family: var(--font-serif);
+      font-size: 2.8rem;
+      font-weight: 700;
+      margin: 6px 0 0;
+      line-height: 1.1;
+      color: var(--sage-dark);
+    }
+
+    .next-date {
+      color: var(--forest-soft);
+      margin: 2px 0 18px;
+      font-size: .95rem;
+    }
+
+    .progress {
+      height: 10px;
+      background: rgba(255, 255, 255, .7);
+      border-radius: 99px;
+      overflow: hidden;
+    }
+
+    .progress>span {
+      display: block;
+      height: 100%;
+      width: 0;
+      border-radius: 99px;
+      background: linear-gradient(90deg, var(--sage), var(--sage-deep));
+      transition: width 1.6s var(--ease);
+    }
+
+    .progress-label {
+      display: flex;
+      justify-content: space-between;
+      font-size: .78rem;
+      color: var(--forest-soft);
+      margin-top: 8px;
+      font-weight: 600;
+    }
+
+    .next-card .deco {
+      position: absolute;
+      right: -24px;
+      bottom: -24px;
+      width: 130px;
+      color: rgba(255, 255, 255, .6);
+      transform: rotate(-18deg);
+    }
+
+    .note-card {
+      background: var(--white);
+      box-shadow: var(--shadow);
+      padding: 40px 28px 30px;
+      transform: rotate(-1deg);
+    }
+
+    .note-card::before {
+      content: "";
+      position: absolute;
+      top: -6px;
+      left: 50%;
+      width: 110px;
+      height: 30px;
+      background: rgba(181, 234, 215, .8);
+      transform: translateX(-50%) rotate(-3deg);
+      box-shadow: 0 2px 6px rgba(0, 0, 0, .05);
+    }
+
+    .note-card p {
+      font-family: var(--font-hand);
+      font-size: 1.65rem;
+      line-height: 1.35;
+      margin: 0 0 14px;
+    }
+
+    .note-card .sig {
+      text-align: right;
+      color: var(--sage-deep);
+      font-size: 1.5rem;
+      margin: 0;
+    }
+
+    .explore {
+      margin-top: 56px;
+    }
+
+    .explore h2 {
+      font-family: var(--font-serif);
+      text-align: center;
+      font-size: clamp(1.7rem, 5vw, 2.3rem);
+      margin: 0 0 24px;
+    }
+
+    .explore-grid {
+      display: grid;
+      gap: 16px;
+    }
+
+    .explore-card {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      text-align: left;
+      padding: 20px;
+      border-radius: var(--radius);
+      cursor: pointer;
+      border: 1px solid var(--glass-border);
+      transition: transform .4s var(--ease-bounce), box-shadow .4s var(--ease);
+    }
+
+    .explore-card:hover {
+      transform: translateY(-5px);
+      box-shadow: var(--shadow-lg);
+    }
+
+    .explore-card .ic {
+      flex: none;
+      width: 54px;
+      height: 54px;
+      border-radius: 18px;
+      display: grid;
+      place-items: center;
+      background: linear-gradient(135deg, var(--mint), var(--mint-2));
+      color: var(--sage-dark);
+    }
+
+    .explore-card .ic svg {
+      width: 26px;
+      height: 26px;
+    }
+
+    .explore-card strong {
+      display: block;
+      font-family: var(--font-serif);
+      font-size: 1.15rem;
+    }
+
+    .explore-card span {
+      font-size: .9rem;
+      color: var(--forest-soft);
+    }
+
+    .explore-card .arrow {
+      margin-left: auto;
+      color: var(--sage);
+      transition: transform .3s;
+      flex: none;
+    }
+
+    .explore-card:hover .arrow {
+      transform: translateX(4px);
+    }
+
+    /* =========================================================
+       TAB 2: MONTHSARY TIMELINE (FLIP CARDS)
+       ========================================================= */
+    .journey-progress {
+      max-width: 520px;
+      margin: -14px auto 40px;
+      padding: 16px 22px;
+      border-radius: 999px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .journey-progress .progress {
+      flex: 1;
+      background: var(--mint);
+    }
+
+    .journey-progress b {
+      font-family: var(--font-serif);
+      white-space: nowrap;
+      font-size: .95rem;
+    }
+
+    .months-grid {
+      display: grid;
+      gap: 22px;
+      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    }
+
+    .flip-card {
+      perspective: 1400px;
+      height: 410px;
+      cursor: pointer;
+      transition: transform .45s var(--ease-bounce);
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .flip-card:hover {
+      transform: translateY(-6px);
+    }
+
+    .flip-inner {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      transition: transform .9s cubic-bezier(.4, .2, .2, 1);
+      transform-style: preserve-3d;
+    }
+
+    .flip-card.flipped .flip-inner {
+      transform: rotateY(180deg);
+    }
+
+    .flip-face {
+      position: absolute;
+      inset: 0;
+      border-radius: 26px;
+      overflow: hidden;
+      backface-visibility: hidden;
+      -webkit-backface-visibility: hidden;
+    }
+
+    .flip-front {
+      background: var(--white);
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      box-shadow: var(--shadow);
+      border: 1px solid rgba(156, 175, 136, .15);
+    }
+
+    .month-photo {
+      position: relative;
+      flex: 1;
+      border-radius: 18px;
+      overflow: hidden;
+      background: var(--mint);
+    }
+
+    .month-photo img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 1s var(--ease);
+    }
+
+    .flip-card:hover .month-photo img {
+      transform: scale(1.06);
+    }
+
+    .month-badge {
+      position: absolute;
+      top: 12px;
+      left: 12px;
+      padding: 6px 14px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, .82);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      font-weight: 700;
+      font-size: .78rem;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+      color: var(--sage-dark);
+    }
+
+    .month-heart {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, .82);
+      display: grid;
+      place-items: center;
+      color: var(--sage-deep);
+    }
+
+    .month-heart svg {
+      width: 16px;
+      height: 16px;
+    }
+
+    .month-info {
+      padding: 14px 8px 4px;
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .month-info .date {
+      font-size: .8rem;
+      font-weight: 600;
+      color: var(--sage-deep);
+      text-transform: uppercase;
+      letter-spacing: .06em;
+      margin: 0;
+    }
+
+    .month-info h3 {
+      font-family: var(--font-serif);
+      font-size: 1.25rem;
+      margin: 2px 0 0;
+      line-height: 1.2;
+    }
+
+    .tap-hint {
+      font-family: var(--font-hand);
+      font-size: 1.15rem;
+      color: var(--forest-soft);
+      white-space: nowrap;
+    }
+
+    .flip-back {
+      transform: rotateY(180deg);
+      background:
+        radial-gradient(circle at 85% 10%, rgba(255, 255, 255, .6), transparent 40%),
+        linear-gradient(160deg, var(--mint), var(--mint-2));
+      padding: 28px 24px;
+      display: flex;
+      flex-direction: column;
+      box-shadow: var(--shadow);
+      border: 1px solid rgba(255, 255, 255, .8);
+    }
+
+    .flip-back .num {
+      position: absolute;
+      right: 14px;
+      top: -10px;
+      font-family: var(--font-serif);
+      font-weight: 700;
+      font-size: 7.5rem;
+      line-height: 1;
+      color: rgba(255, 255, 255, .65);
+    }
+
+    .flip-back .chip {
+      align-self: flex-start;
+      background: rgba(255, 255, 255, .75);
+      position: relative;
+    }
+
+    .flip-back h3 {
+      font-family: var(--font-serif);
+      font-size: 1.55rem;
+      margin: 18px 0 10px;
+      line-height: 1.2;
+      position: relative;
+    }
+
+    .flip-back .snippet {
+      font-family: var(--font-hand);
+      font-size: 1.4rem;
+      line-height: 1.3;
+      margin: 0;
+      color: var(--forest);
+      display: -webkit-box;
+      -webkit-line-clamp: 5;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .flip-back .back-actions {
+      margin-top: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .flip-back .btn {
+      width: 100%;
+      padding: 13px 20px;
+    }
+
+    .flip-back small {
+      color: var(--forest-soft);
+      font-size: .78rem;
+    }
+
+    .flip-card.locked .month-photo img {
+      filter: grayscale(.7) blur(3px);
+      opacity: .7;
+    }
+
+    .lock-overlay {
+      position: absolute;
+      inset: 0;
+      display: grid;
+      place-items: center;
+      text-align: center;
+      color: var(--forest);
+      font-family: var(--font-hand);
+      font-size: 1.5rem;
+    }
+
+    .lock-overlay span {
+      background: rgba(255, 255, 255, .85);
+      padding: 10px 18px;
+      border-radius: 16px;
+      box-shadow: var(--shadow-sm);
+    }
+
+    /* =========================================================
+       TAB 3: SCRAPBOOK (POLAROIDS)
+       ========================================================= */
+    .filters {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 10px;
+      margin: -10px 0 40px;
+    }
+
+    .filter-btn {
+      border: 1px solid rgba(156, 175, 136, .35);
+      background: rgba(255, 255, 255, .75);
+      padding: 10px 20px;
+      border-radius: 999px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: .92rem;
+      color: var(--forest);
+      transition: all .35s var(--ease);
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .filter-btn:hover {
+      background: var(--white);
+      transform: translateY(-2px);
+    }
+
+    .filter-btn.active {
+      background: linear-gradient(135deg, var(--sage), var(--sage-deep));
+      color: var(--white);
+      border-color: transparent;
+      box-shadow: 0 10px 22px -10px rgba(94, 117, 80, .8);
+    }
+
+    .filter-btn .count {
+      opacity: .65;
+      font-weight: 500;
+      margin-left: 4px;
+    }
+
+    .gallery {
+      columns: 2;
+      column-gap: 16px;
+      padding: 8px 4px;
+    }
+
+    .polaroid {
+      display: inline-block;
+      width: 100%;
+      break-inside: avoid;
+      margin: 0 0 26px;
+      background: var(--white);
+      padding: 9px 9px 0;
+      border-radius: 4px;
+      box-shadow: 0 10px 24px -12px rgba(44, 62, 53, .35), 0 2px 4px rgba(44, 62, 53, .06);
+      transform: rotate(var(--r));
+      transition: transform .5s var(--ease-bounce), box-shadow .4s var(--ease);
+      cursor: zoom-in;
+      position: relative;
+      border: 0;
+      text-align: center;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .polaroid::before {
+      content: "";
+      position: absolute;
+      top: -11px;
+      left: 50%;
+      width: 76px;
+      height: 22px;
+      z-index: 2;
+      background: rgba(226, 240, 203, .82);
+      transform: translateX(-50%) rotate(var(--tape));
+      box-shadow: 0 1px 3px rgba(0, 0, 0, .06);
+    }
+
+    .polaroid:nth-child(3n)::before {
+      background: rgba(181, 234, 215, .8);
+    }
+
+    .polaroid:hover {
+      transform: rotate(0deg) scale(1.04);
+      box-shadow: var(--shadow-lg);
+      z-index: 3;
+    }
+
+    .polaroid img {
+      width: 100%;
+      height: auto;
+      border-radius: 2px;
+      background: var(--mint);
+    }
+
+    .polaroid figcaption {
+      font-family: var(--font-hand);
+      font-size: 1.3rem;
+      line-height: 1.15;
+      padding: 10px 4px 14px;
+      color: var(--forest);
+    }
+
+    .polaroid .fav {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, .9);
+      color: #E58F8A;
+      display: grid;
+      place-items: center;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .polaroid .fav svg {
+      width: 14px;
+      height: 14px;
+    }
+
+    .polaroid.hide {
+      display: none;
+    }
+
+    .polaroid.pop {
+      animation: popIn .6s var(--ease-bounce) both;
+      animation-delay: calc(var(--d, 0) * 50ms);
+    }
+
+    @keyframes popIn {
+      from {
+        opacity: 0;
+        transform: rotate(var(--r)) scale(.8) translateY(20px);
+      }
+
+      to {
+        opacity: 1;
+        transform: rotate(var(--r)) scale(1);
+      }
+    }
+
+    .empty-state {
+      text-align: center;
+      font-family: var(--font-hand);
+      font-size: 1.6rem;
+      color: var(--forest-soft);
+      display: none;
+    }
+
+    /* =========================================================
+       TAB 4: FUN CORNER
+       ========================================================= */
+    .fun-grid {
+      display: grid;
+      gap: 26px;
+    }
+
+    .fun-card {
+      border-radius: var(--radius-lg);
+      padding: 32px 22px;
+      text-align: center;
+    }
+
+    .fun-card h3 {
+      font-family: var(--font-serif);
+      font-size: 1.7rem;
+      margin: 0 0 6px;
+    }
+
+    .fun-card>p {
+      color: var(--forest-soft);
+      margin: 0 0 22px;
+    }
+
+    .reason-note {
+      min-height: 150px;
+      max-width: 360px;
+      margin: 0 auto 24px;
+      background: var(--white);
+      border-radius: 22px;
+      padding: 22px 24px;
+      box-shadow: var(--shadow);
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      transform-origin: bottom center;
+    }
+
+    .reason-note::after {
+      content: "";
+      position: absolute;
+      bottom: -10px;
+      left: 50%;
+      width: 20px;
+      height: 20px;
+      background: var(--white);
+      transform: translateX(-50%) rotate(45deg);
+      border-radius: 4px;
+    }
+
+    .reason-note .reason-num {
+      font-size: .75rem;
+      font-weight: 700;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      color: var(--sage-deep);
+    }
+
+    .reason-note p {
+      font-family: var(--font-hand);
+      font-size: 1.65rem;
+      line-height: 1.25;
+      margin: 6px 0 0;
+    }
+
+    .reason-note.pop {
+      animation: notePop .7s var(--ease-bounce);
+    }
+
+    @keyframes notePop {
+      0% {
+        transform: scale(.6) translateY(30px);
+        opacity: 0;
+      }
+
+      100% {
+        transform: none;
+        opacity: 1;
+      }
+    }
+
+    .jar {
+      position: relative;
+      width: 190px;
+      height: 230px;
+      margin: 0 auto 26px;
+      background: none;
+      border: 0;
+      cursor: pointer;
+      padding: 0;
+      display: block;
+      -webkit-tap-highlight-color: transparent;
+      transition: transform .3s var(--ease-bounce);
+    }
+
+    .jar:hover {
+      transform: translateY(-4px) rotate(-2deg);
+    }
+
+    .jar.shake {
+      animation: shake .7s var(--ease);
+    }
+
+    @keyframes shake {
+
+      0%,
+      100% {
+        transform: rotate(0);
+      }
+
+      15% {
+        transform: rotate(-9deg) translateY(-6px);
+      }
+
+      30% {
+        transform: rotate(8deg) translateY(-10px);
+      }
+
+      45% {
+        transform: rotate(-6deg) translateY(-6px);
+      }
+
+      60% {
+        transform: rotate(4deg);
+      }
+
+      80% {
+        transform: rotate(-2deg);
+      }
+    }
+
+    .jar-lid {
+      position: absolute;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 118px;
+      height: 30px;
+      border-radius: 10px;
+      background: linear-gradient(180deg, #B1C29F, var(--sage-deep));
+      box-shadow: inset 0 -4px 0 rgba(0, 0, 0, .08), var(--shadow-sm);
+      z-index: 3;
+    }
+
+    .jar-lid::after {
+      content: "";
+      position: absolute;
+      left: 10px;
+      right: 10px;
+      top: 6px;
+      height: 3px;
+      border-radius: 3px;
+      background: rgba(255, 255, 255, .35);
+    }
+
+    .jar-ribbon {
+      position: absolute;
+      top: 30px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 3;
+      width: 108px;
+      height: 12px;
+      background: var(--mint-2);
+      border-radius: 0 0 6px 6px;
+    }
+
+    .jar-ribbon::after {
+      content: "";
+      position: absolute;
+      right: -6px;
+      top: -6px;
+      color: var(--sage-deep);
+      font-size: 18px;
+    }
+
+    .jar-body {
+      position: absolute;
+      top: 34px;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      border-radius: 48px 48px 60px 60px;
+      background: linear-gradient(115deg, rgba(255, 255, 255, .85), rgba(226, 240, 203, .4) 50%, rgba(181, 234, 215, .5));
+      border: 3px solid rgba(255, 255, 255, .95);
+      box-shadow: inset 0 -24px 40px rgba(156, 175, 136, .35), inset 12px 0 24px rgba(255, 255, 255, .8), 0 24px 40px -18px rgba(44, 62, 53, .4);
+      overflow: hidden;
+    }
+
+    .jar-body::before {
+      content: "";
+      position: absolute;
+      top: 22px;
+      left: 22px;
+      width: 14px;
+      height: 60%;
+      border-radius: 20px;
+      background: rgba(255, 255, 255, .75);
+      z-index: 2;
+    }
+
+    .jar-item {
+      position: absolute;
+      animation: bob 3.5s ease-in-out infinite;
+    }
+
+    .jar-item svg {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+
+    .jar-paper {
+      border-radius: 4px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, .08);
+    }
+
+    .jar-label {
+      position: absolute;
+      left: 50%;
+      top: 38%;
+      transform: translate(-50%, -50%) rotate(-4deg);
+      z-index: 2;
+      background: var(--white);
+      padding: 6px 14px;
+      border-radius: 12px;
+      box-shadow: var(--shadow-sm);
+      font-family: var(--font-hand);
+      font-size: 1.25rem;
+      line-height: 1;
+      color: var(--sage-dark);
+      white-space: nowrap;
+    }
+
+    .reason-count {
+      font-size: .85rem;
+      color: var(--forest-soft);
+      margin: 14px 0 0;
+    }
+
+    .envelopes {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 26px 18px;
+    }
+
+    .env-card {
+      background: none;
+      border: 0;
+      padding: 0;
+      cursor: pointer;
+      text-align: center;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .envelope {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 3 / 2;
+      margin-top: 24px;
+      filter: drop-shadow(0 14px 16px rgba(44, 62, 53, .18));
+      transition: transform .5s var(--ease-bounce);
+    }
+
+    .env-card:hover .envelope {
+      transform: translateY(-6px) rotate(-2deg);
+    }
+
+    .env-card:nth-child(even):hover .envelope {
+      transform: translateY(-6px) rotate(2deg);
+    }
+
+    .env-back,
+    .env-front,
+    .env-flap {
+      position: absolute;
+      border-radius: 10px;
+    }
+
+    .env-back {
+      inset: 0;
+      background: var(--env-dark);
+    }
+
+    .env-letter {
+      position: absolute;
+      left: 9%;
+      right: 9%;
+      top: 8%;
+      bottom: 8%;
+      z-index: 2;
+      background: var(--white);
+      border-radius: 6px;
+      display: flex;
+      justify-content: center;
+      padding-top: 8%;
+      font-family: var(--font-hand);
+      font-size: 1.1rem;
+      color: var(--sage-dark);
+      background-image: repeating-linear-gradient(transparent 0 13px, rgba(156, 175, 136, .25) 13px 14px);
+      transition: transform .6s var(--ease) .2s;
+    }
+
+    .env-front {
+      inset: 0;
+      z-index: 3;
+      background: var(--env);
+      clip-path: polygon(0 0, 50% 54%, 100% 0, 100% 100%, 0 100%);
+    }
+
+    .env-flap {
+      left: 0;
+      right: 0;
+      top: 0;
+      height: 60%;
+      z-index: 4;
+      background: var(--env-flap);
+      clip-path: polygon(0 0, 100% 0, 50% 100%);
+      transform-origin: top center;
+      transform: perspective(700px) rotateX(0deg);
+      transition: transform .55s var(--ease), z-index 0s .27s;
+    }
+
+    .env-seal {
+      position: absolute;
+      left: 50%;
+      top: 58%;
+      z-index: 5;
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      transform: translate(-50%, -50%);
+      background: radial-gradient(circle at 35% 30%, #A7BB93, var(--sage-dark));
+      color: var(--white);
+      display: grid;
+      place-items: center;
+      box-shadow: 0 4px 10px rgba(44, 62, 53, .3), inset 0 -2px 0 rgba(0, 0, 0, .15);
+      transition: opacity .3s, transform .4s var(--ease);
+    }
+
+    .env-seal svg {
+      width: 16px;
+      height: 16px;
+    }
+
+    .env-card.open .env-flap {
+      transform: perspective(700px) rotateX(180deg);
+      z-index: 1;
+    }
+
+    .env-card.open .env-letter {
+      transform: translateY(-42%);
+    }
+
+    .env-card.open .env-seal {
+      opacity: 0;
+      transform: translate(-50%, -50%) scale(.4);
+    }
+
+    .env-label {
+      margin: 16px 0 0;
+      line-height: 1.2;
+    }
+
+    .env-label span {
+      display: block;
+      font-family: var(--font-hand);
+      font-size: 1.25rem;
+      color: var(--sage-deep);
+    }
+
+    .env-label strong {
+      font-family: var(--font-serif);
+      font-size: 1.05rem;
+      font-weight: 600;
+    }
+
+    .env-opened {
+      display: inline-block;
+      margin-top: 6px;
+      font-size: .7rem;
+      font-weight: 700;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      color: var(--sage-dark);
+      background: var(--mint);
+      padding: 3px 10px;
+      border-radius: 99px;
+      opacity: 0;
+      transition: opacity .4s;
+    }
+
+    .env-card.was-opened .env-opened {
+      opacity: 1;
+    }
+
+    /* =========================================================
+       MODAL (letters) & LIGHTBOX (photos)
+       ========================================================= */
+    .modal,
+    .lightbox {
+      position: fixed;
+      inset: 0;
+      display: grid;
+      place-items: center;
+      padding: 16px;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity .4s var(--ease), visibility .4s;
+    }
+
+    .modal {
+      z-index: 800;
+      background: rgba(44, 62, 53, .45);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+    }
+
+    .lightbox {
+      z-index: 900;
+      background: rgba(24, 36, 30, .86);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+    }
+
+    .modal.open,
+    .lightbox.open {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .modal-card {
+      position: relative;
+      width: 100%;
+      max-width: 640px;
+      max-height: 88vh;
+      overflow-y: auto;
+      background: var(--cream);
+      border-radius: var(--radius-lg);
+      padding: 40px 24px 30px;
+      box-shadow: var(--shadow-lg);
+      transform: translateY(40px) scale(.95);
+      transition: transform .55s var(--ease-bounce);
+      overscroll-behavior: contain;
+    }
+
+    .modal.open .modal-card {
+      transform: none;
+    }
+
+    .close-btn {
+      position: absolute;
+      top: 14px;
+      right: 14px;
+      z-index: 5;
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      border: 0;
+      cursor: pointer;
+      background: var(--white);
+      color: var(--forest);
+      box-shadow: var(--shadow-sm);
+      display: grid;
+      place-items: center;
+      transition: transform .3s var(--ease-bounce);
+    }
+
+    .close-btn:hover {
+      transform: rotate(90deg) scale(1.08);
+    }
+
+    .close-btn svg {
+      width: 18px;
+      height: 18px;
+    }
+
+    .letter-head {
+      text-align: center;
+      margin-bottom: 22px;
+    }
+
+    .letter-head h2 {
+      font-family: var(--font-serif);
+      font-size: clamp(1.8rem, 6vw, 2.4rem);
+      margin: 14px 0 0;
+      line-height: 1.15;
+    }
+
+    .letter-emoji {
+      font-size: 2.6rem;
+      display: block;
+      margin-bottom: 4px;
+      animation: bob 3s ease-in-out infinite;
+    }
+
+    .letter-paper {
+      background: var(--white);
+      border-radius: 18px;
+      padding: 26px 22px 22px;
+      box-shadow: var(--shadow-sm);
+      border: 1px solid rgba(156, 175, 136, .15);
+    }
+
+    .letter-body {
+      font-family: var(--font-hand);
+      font-size: 1.5rem;
+      line-height: 2.1rem;
+      color: var(--forest);
+      background-image: repeating-linear-gradient(transparent 0 calc(2.1rem - 1px), rgba(156, 175, 136, .3) calc(2.1rem - 1px) 2.1rem);
+    }
+
+    .letter-body p {
+      margin: 0;
+      text-indent: 1.4em;
+    }
+
+    .letter-body p:first-child {
+      text-indent: 0;
+    }
+
+    .signature {
+      text-align: right;
+      font-family: var(--font-hand);
+      font-size: 1.7rem;
+      color: var(--sage-deep);
+      margin: 14px 0 0;
+    }
+
+    .letter-photos-title {
+      font-family: var(--font-serif);
+      font-size: 1.15rem;
+      text-align: center;
+      margin: 30px 0 18px;
+    }
+
+    .letter-photos {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+    }
+
+    .mini-polaroid {
+      background: var(--white);
+      padding: 6px 6px 18px;
+      border-radius: 3px;
+      border: 0;
+      cursor: zoom-in;
+      box-shadow: var(--shadow-sm);
+      transform: rotate(var(--r));
+      transition: transform .4s var(--ease-bounce);
+    }
+
+    .mini-polaroid:hover {
+      transform: rotate(0) scale(1.06);
+    }
+
+    .mini-polaroid img {
+      aspect-ratio: 1;
+      object-fit: cover;
+      width: 100%;
+    }
+
+    .lb-stage {
+      position: relative;
+      width: 100%;
+      max-width: 560px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .lb-frame {
+      background: var(--white);
+      padding: 12px 12px 0;
+      border-radius: 6px;
+      width: 100%;
+      box-shadow: 0 40px 80px -20px rgba(0, 0, 0, .6);
+      transform: rotate(-1.2deg) scale(.9);
+      transition: transform .5s var(--ease-bounce);
+    }
+
+    .lightbox.open .lb-frame {
+      transform: rotate(-1.2deg);
+    }
+
+    .lb-frame img {
+      width: 100%;
+      max-height: 64vh;
+      object-fit: contain;
+      background: var(--mint);
+      border-radius: 2px;
+    }
+
+    .lb-frame img.swap {
+      animation: swapIn .45s var(--ease);
+    }
+
+    @keyframes swapIn {
+      from {
+        opacity: 0;
+        transform: scale(.97);
+      }
+
+      to {
+        opacity: 1;
+        transform: none;
+      }
+    }
+
+    .lb-caption {
+      text-align: center;
+      padding: 14px 10px 18px;
+    }
+
+    .lb-caption p {
+      font-family: var(--font-hand);
+      font-size: clamp(1.6rem, 5vw, 2rem);
+      line-height: 1.15;
+      margin: 0;
+    }
+
+    .lb-caption small {
+      color: var(--forest-soft);
+      font-size: .82rem;
+      letter-spacing: .04em;
+    }
+
+    .lb-controls {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      margin-top: 22px;
+      color: var(--white);
+    }
+
+    .lb-btn {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      border: 1px solid rgba(255, 255, 255, .3);
+      background: rgba(255, 255, 255, .14);
+      color: var(--white);
+      cursor: pointer;
+      display: grid;
+      place-items: center;
+      transition: background .3s, transform .3s var(--ease-bounce);
+    }
+
+    .lb-btn:hover {
+      background: rgba(255, 255, 255, .28);
+      transform: scale(1.08);
+    }
+
+    .lb-btn svg {
+      width: 20px;
+      height: 20px;
+    }
+
+    .lb-counter {
+      font-weight: 600;
+      font-size: .9rem;
+      min-width: 60px;
+      text-align: center;
+      opacity: .85;
+    }
+
+    .lightbox .close-btn {
+      position: fixed;
+      top: 18px;
+      right: 18px;
+    }
+
+    /* =========================================================
+       NAVIGATION
+       ========================================================= */
+    .nav {
+      position: fixed;
+      left: 50%;
+      bottom: calc(14px + env(safe-area-inset-bottom));
+      transform: translateX(-50%);
+      z-index: 400;
+      display: flex;
+      gap: 2px;
+      padding: 6px;
+      border-radius: 999px;
+      transition: opacity .8s var(--ease) .3s, transform .8s var(--ease-bounce) .3s;
+    }
+
+    body.is-loading .nav {
+      opacity: 0;
+      transform: translateX(-50%) translateY(40px);
+    }
+
+    .nav-indicator {
+      position: absolute;
+      top: 6px;
+      bottom: 6px;
+      left: 0;
+      width: 0;
+      border-radius: 999px;
+      z-index: 0;
+      background: linear-gradient(135deg, var(--sage), var(--sage-deep));
+      box-shadow: 0 8px 20px -8px rgba(94, 117, 80, .9);
+      transition: transform .55s var(--ease-bounce), width .45s var(--ease);
+    }
+
+    .nav-btn {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2px;
+      padding: 8px 14px;
+      border: 0;
+      border-radius: 999px;
+      background: none;
+      cursor: pointer;
+      font-size: .68rem;
+      font-weight: 600;
+      color: var(--forest-soft);
+      transition: color .35s;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .nav-btn svg {
+      width: 22px;
+      height: 22px;
+      transition: transform .4s var(--ease-bounce);
+    }
+
+    .nav-btn:hover svg {
+      transform: translateY(-2px) scale(1.08);
+    }
+
+    .nav-btn.active {
+      color: var(--white);
+    }
+
+    /* =========================================================
+       MUSIC PLAYER
+       ========================================================= */
+    .music {
+      position: fixed;
+      top: calc(14px + env(safe-area-inset-top));
+      right: 14px;
+      z-index: 450;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 5px;
+      border-radius: 999px;
+      transition: opacity .8s var(--ease) .5s;
+    }
+
+    body.is-loading .music {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .music-btn {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      border: 0;
+      cursor: pointer;
+      flex: none;
+      background: linear-gradient(135deg, var(--sage), var(--sage-deep));
+      color: var(--white);
+      display: grid;
+      place-items: center;
+      position: relative;
+      box-shadow: 0 6px 14px -6px rgba(94, 117, 80, .9);
+      transition: transform .35s var(--ease-bounce);
+    }
+
+    .music-btn:hover {
+      transform: scale(1.08);
+    }
+
+    .music-btn svg {
+      width: 20px;
+      height: 20px;
+    }
+
+    .music.playing .music-btn {
+      animation: spin 6s linear infinite;
+    }
+
+    .music.playing .music-btn::after {
+      content: "";
+      position: absolute;
+      inset: -4px;
+      border-radius: 50%;
+      border: 2px solid var(--sage);
+      animation: ripple 2s ease-out infinite;
+    }
+
+    .music-meta {
+      display: none;
+      padding-right: 14px;
+      line-height: 1.15;
+    }
+
+    .music-meta strong {
+      display: block;
+      font-size: .82rem;
+    }
+
+    .music-meta span {
+      font-size: .72rem;
+      color: var(--forest-soft);
+    }
+
+    .eq {
+      display: inline-flex;
+      gap: 2px;
+      align-items: flex-end;
+      height: 12px;
+      margin-left: 6px;
+      vertical-align: -1px;
+    }
+
+    .eq i {
+      width: 3px;
+      height: 4px;
+      background: var(--sage-deep);
+      border-radius: 2px;
+    }
+
+    .music.playing .eq i {
+      animation: eq .9s ease-in-out infinite;
+    }
+
+    .music.playing .eq i:nth-child(2) {
+      animation-delay: -.3s;
+    }
+
+    .music.playing .eq i:nth-child(3) {
+      animation-delay: -.6s;
+    }
+
+    @keyframes eq {
+
+      0%,
+      100% {
+        height: 3px;
+      }
+
+      50% {
+        height: 12px;
+      }
+    }
+
+    /* =========================================================
+       TOAST & FOOTER
+       ========================================================= */
+    .toast {
+      position: fixed;
+      left: 50%;
+      top: calc(76px + env(safe-area-inset-top));
+      z-index: 1100;
+      transform: translate(-50%, -20px);
+      opacity: 0;
+      pointer-events: none;
+      background: var(--forest);
+      color: var(--white);
+      padding: 12px 22px;
+      border-radius: 999px;
+      font-size: .9rem;
+      font-weight: 500;
+      box-shadow: var(--shadow-lg);
+      transition: all .45s var(--ease-bounce);
+      max-width: calc(100vw - 32px);
+      text-align: center;
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translate(-50%, 0);
+    }
+
+    footer {
+      text-align: center;
+      padding: 50px 0 0;
+      color: var(--forest-soft);
+      font-size: .88rem;
+    }
+
+    footer .hand {
+      font-family: var(--font-hand);
+      font-size: 1.5rem;
+      color: var(--sage-deep);
+      display: block;
+    }
+
+    /* =========================================================
+       RESPONSIVE
+       ========================================================= */
+    @media (min-width: 560px) {
+      .units {
+        grid-template-columns: repeat(4, 1fr);
+      }
+
+      .letter-photos {
+        gap: 16px;
+      }
+
+      .modal-card {
+        padding: 48px 40px 36px;
+      }
+
+      .letter-paper {
+        padding: 32px 34px 26px;
+      }
+
+      .music-meta {
+        display: block;
+      }
+    }
+
+    @media (min-width: 640px) {
+      .nav-btn {
+        flex-direction: row;
+        gap: 8px;
+        padding: 11px 20px;
+        font-size: .9rem;
+      }
+
+      .nav-btn svg {
+        width: 20px;
+        height: 20px;
+      }
+
+      .gallery {
+        columns: 3;
+        column-gap: 22px;
+      }
+
+      .polaroid figcaption {
+        font-size: 1.4rem;
+      }
+
+      .explore-grid {
+        grid-template-columns: repeat(3, 1fr);
+      }
+
+      .explore-card {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 24px;
+      }
+
+      .explore-card .arrow {
+        margin-left: 0;
+      }
+    }
+
+    @media (min-width: 860px) {
+      main {
+        padding-top: 36px;
+      }
+
+      .hero {
+        grid-template-columns: 1.15fr .85fr;
+        padding: 40px 0 70px;
+      }
+
+      .hero-text {
+        text-align: left;
+      }
+
+      .hero-sub {
+        margin-left: 0;
+      }
+
+      .hero-actions {
+        justify-content: flex-start;
+      }
+
+      .stats {
+        grid-template-columns: 1.3fr 1fr;
+      }
+
+      .note-card {
+        grid-column: 1 / -1;
+        max-width: 700px;
+        margin: 14px auto 0;
+        width: 100%;
+      }
+
+      .fun-grid {
+        grid-template-columns: 1fr 1.2fr;
+        align-items: start;
+      }
+
+      .fun-card {
+        padding: 40px 34px;
+      }
+    }
+
+    @media (min-width: 1080px) {
+      .gallery {
+        columns: 4;
+      }
+
+      .stats {
+        grid-template-columns: 1.2fr 1fr 1fr;
+      }
+
+      .note-card {
+        grid-column: auto;
+        margin: 0;
+        transform: rotate(1.5deg);
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+
+      *,
+      *::before,
+      *::after {
+        animation-duration: .001ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: .001ms !important;
+      }
+
+      .particles {
+        display: none;
+      }
+    }
+  </style>
+</head>
+
+<body class="is-loading">
+
+  <!-- ================= LOADER / INTRO ================= -->
+  <div id="loader" role="dialog" aria-label="Welcome">
+    <div class="curtain left"></div>
+    <div class="curtain right"></div>
+    <div class="particles" id="loaderParticles" aria-hidden="true"></div>
+    <div class="loader-content">
+      <div class="loader-heart" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="currentColor">
+          <path
+            d="M12 21s-7.6-4.6-10-9.4C.4 8.3 2.4 4 6.4 4c2.3 0 3.8 1.3 5.6 3.4C13.8 5.3 15.3 4 17.6 4c4 0 6 4.3 4.4 7.6C19.6 16.4 12 21 12 21z" />
+        </svg>
+      </div>
+      <p class="type-line"><span id="typeText"></span><span class="caret"></span></p>
+      <p class="loader-sub" id="loaderSub"></p>
+      <button class="btn btn-light" id="openBtn">Open Our Memories</button>
+    </div>
+  </div>
+
+  <!-- Floating background particles -->
+  <div class="particles" id="bgParticles" aria-hidden="true"></div>
+
+  <!-- ================= MUSIC PLAYER ================= -->
+  <!-- Your song is set in OUR_MEMORIES.music.src (the <audio> tag below is filled in automatically) -->
+  <audio id="bgMusic" loop preload="none">
+    <source src="" type="audio/mpeg" />
+  </audio>
+  <div class="music glass" id="musicPlayer">
+    <button class="music-btn" id="musicBtn" aria-label="Play our song">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+        stroke-linejoin="round">
+        <path d="M9 18V5l11-2v13" />
+        <circle cx="6" cy="18" r="3" />
+        <circle cx="17" cy="16" r="3" />
+      </svg>
+    </button>
+    <div class="music-meta">
+      <strong id="songTitle">Our Song</strong>
+      <span id="songArtist">tap to play</span><span class="eq" aria-hidden="true"><i></i><i></i><i></i></span>
+    </div>
+  </div>
+
+  <header class="topbar">
+    <button class="brand" data-goto="home" aria-label="Go home">
+      <span id="brandMe">D</span>
+      <svg viewBox="0 0 24 24" fill="currentColor">
+        <path
+          d="M12 21s-7.6-4.6-10-9.4C.4 8.3 2.4 4 6.4 4c2.3 0 3.8 1.3 5.6 3.4C13.8 5.3 15.3 4 17.6 4c4 0 6 4.3 4.4 7.6C19.6 16.4 12 21 12 21z" />
+      </svg>
+      <span id="brandHer">J</span>
+    </button>
+  </header>
+
+  <main>
+    <!-- ================= TAB 1: HOME ================= -->
+    <section class="view active" id="view-home" aria-labelledby="heroTitle">
+      <div class="hero">
+        <div class="hero-text">
+          <span class="chip reveal" id="heroEyebrow">Happy Monthsary</span>
+          <h1 class="reveal" style="--i:1" id="heroTitle">Hi, <em id="heroName">love</em> </h1>
+          <p class="hero-sub reveal" style="--i:2" id="heroSub"></p>
+          <div class="hero-actions reveal" style="--i:3">
+            <button class="btn btn-primary" data-goto="timeline">Our Monthsaries</button>
+            <button class="btn btn-ghost" data-goto="fun">Something for you</button>
+          </div>
+        </div>
+        <div class="hero-photo-wrap reveal" style="--i:2">
+          <img class="hero-photo" id="heroPhoto" alt="Us together" />
+          <span class="orbit o1" data-icon="heart"></span>
+          <span class="orbit o2" data-icon="heart"></span>
+          <span class="orbit o3" data-icon="leaf"></span>
+          <span class="hero-sticker" id="heroSticker">you &amp; me</span>
+        </div>
+      </div>
+
+      <div class="stats">
+        <article class="card glass counter-card reveal" style="--i:3">
+          <p class="label">We've been together for</p>
+          <p class="big-days" id="cDays">0</p>
+          <p class="big-days-label">days &amp; counting</p>
+          <div class="units">
+            <div class="unit"><strong id="cMonths">0</strong><span>Months</span></div>
+            <div class="unit"><strong id="cHours">0</strong><span>Hours</span></div>
+            <div class="unit"><strong id="cMinutes">0</strong><span>Minutes</span></div>
+            <div class="unit"><strong id="cSeconds">0</strong><span>Seconds</span></div>
+          </div>
+          <p class="since">since <b id="sinceDate"></b></p>
+        </article>
+
+        <article class="card next-card reveal" style="--i:4">
+          <div class="icon-badge">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+              stroke-linejoin="round">
+              <rect x="3" y="5" width="18" height="16" rx="3" />
+              <path d="M8 3v4M16 3v4M3 10h18" />
+              <path d="M12 18s-3-1.8-3-3.6a1.6 1.6 0 0 1 3-.8 1.6 1.6 0 0 1 3 .8C15 16.2 12 18 12 18z"
+                fill="currentColor" stroke="none" />
+            </svg>
+          </div>
+          <h3 id="nextTitle">Next monthsary</h3>
+          <p class="next-days" id="nextDays">—</p>
+          <p class="next-date" id="nextDate"></p>
+          <div class="progress"><span id="monthProgress"></span></div>
+          <div class="progress-label"><span>this month</span><span id="monthProgressLabel">0%</span></div>
+          <span class="deco" data-icon="heart"></span>
+        </article>
+
+        <article class="card note-card reveal" style="--i:5">
+          <p id="loveNote"></p>
+          <p class="sig" id="loveNoteSig"></p>
+        </article>
+      </div>
+
+      <section class="explore" aria-labelledby="exploreTitle">
+        <h2 id="exploreTitle" class="reveal" style="--i:5">Wander around, my love</h2>
+        <div class="explore-grid">
+          <button class="explore-card glass reveal" style="--i:6" data-goto="timeline">
+            <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="5" width="18" height="16" rx="3" />
+                <path d="M8 3v4M16 3v4M3 10h18" />
+              </svg></span>
+            <div><strong>12 Monthsaries</strong><span>A letter for every month of us</span></div>
+            <span class="arrow">→</span>
+          </button>
+          <button class="explore-card glass reveal" style="--i:7" data-goto="scrapbook">
+            <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round">
+                <path d="M4 8h3l2-3h6l2 3h3a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1z" />
+                <circle cx="12" cy="13.5" r="3.5" />
+              </svg></span>
+            <div><strong>Our Scrapbook</strong><span>Little moments I never want to forget</span></div>
+            <span class="arrow">→</span>
+          </button>
+          <button class="explore-card glass reveal" style="--i:8" data-goto="fun">
+            <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z" />
+                <path d="M19 15l.8 2.2L22 18l-2.2.8L19 21l-.8-2.2L16 18l2.2-.8z" />
+              </svg></span>
+            <div><strong>Fun Corner</strong><span>A jar of reasons &amp; secret letters</span></div>
+            <span class="arrow">→</span>
+          </button>
+        </div>
+      </section>
+    </section>
+
+    <!-- ================= TAB 2: MONTHSARY TIMELINE ================= -->
+    <section class="view" id="view-timeline" aria-labelledby="timelineTitle">
+      <div class="section-head reveal">
+        <span class="script-eyebrow">month by month</span>
+        <h2 id="timelineTitle">Our <em>12</em> Monthsaries</h2>
+        <p>Tap a card to flip it over, then open the letter I wrote for that month.</p>
+      </div>
+      <div class="journey-progress glass reveal" style="--i:1">
+        <b id="journeyLabel">0 / 12</b>
+        <div class="progress"><span id="journeyBar"></span></div>
+
+      </div>
+      <div class="months-grid" id="monthsGrid"></div>
+    </section>
+
+    <!-- ================= TAB 3: SCRAPBOOK ================= -->
+    <section class="view" id="view-scrapbook" aria-labelledby="scrapTitle">
+      <div class="section-head reveal">
+        <span class="script-eyebrow">snapshots of us</span>
+        <h2 id="scrapTitle">Moments <em>Scrapbook</em></h2>
+        <p>All the silly, sweet, everyday moments. Tap a polaroid to see it up close.</p>
+      </div>
+      <div class="filters reveal" style="--i:1" id="filters" role="tablist" aria-label="Filter photos"></div>
+      <div class="gallery" id="gallery"></div>
+      <p class="empty-state" id="emptyState">No photos here yet... let's make more memories!</p>
+    </section>
+
+    <!-- ================= TAB 4: FUN CORNER ================= -->
+    <section class="view" id="view-fun" aria-labelledby="funTitle">
+      <div class="section-head reveal">
+        <span class="script-eyebrow">just for you</span>
+        <h2 id="funTitle">The <em>Fun</em> Corner</h2>
+        <p>A few little things to make you smile whenever you need it.</p>
+      </div>
+
+      <div class="fun-grid">
+        <article class="fun-card glass reveal" style="--i:1">
+          <h3>Reasons I Love You</h3>
+          <p>Tap the jar and pull out a little note</p>
+          <div class="reason-note" id="reasonNote" aria-live="polite">
+            <span class="reason-num" id="reasonNum">a jar full of you</span>
+            <p id="reasonText">Go on, give the jar a little shake…</p>
+          </div>
+          <button class="jar" id="jar" aria-label="Pull a reason from the jar">
+            <span class="jar-lid"></span>
+            <span class="jar-ribbon"></span>
+            <span class="jar-body" id="jarBody">
+              <span class="jar-label">reasons I love you</span>
+            </span>
+          </button>
+          <button class="btn btn-primary" id="reasonBtn">Pick a reason</button>
+          <p class="reason-count" id="reasonCount"></p>
+        </article>
+
+        <article class="fun-card glass reveal" style="--i:2">
+          <h3>Open When…</h3>
+          <p>Little letters for whatever you're feeling.</p>
+          <div class="envelopes" id="envelopes"></div>
+        </article>
+      </div>
+    </section>
+
+    <footer>
+      <span class="hand" id="footerHand"></span>
+      <span id="footerText"></span>
+    </footer>
+  </main>
+
+  <!-- ================= NAVIGATION ================= -->
+  <nav class="nav glass" id="nav" aria-label="Main">
+    <span class="nav-indicator" id="navIndicator"></span>
+    <button class="nav-btn active" data-view="home" aria-current="page">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+        stroke-linejoin="round">
+        <path d="M3 10.5 12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1z" />
+      </svg>
+      <span>Home</span>
+    </button>
+    <button class="nav-btn" data-view="timeline">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+        stroke-linejoin="round">
+        <rect x="3" y="5" width="18" height="16" rx="3" />
+        <path d="M8 3v4M16 3v4M3 10h18" />
+      </svg>
+      <span>Months</span>
+    </button>
+    <button class="nav-btn" data-view="scrapbook">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+        stroke-linejoin="round">
+        <path d="M4 8h3l2-3h6l2 3h3a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1z" />
+        <circle cx="12" cy="13.5" r="3.5" />
+      </svg>
+      <span>Moments</span>
+    </button>
+    <button class="nav-btn" data-view="fun">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+        stroke-linejoin="round">
+        <path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z" />
+        <path d="M19 15l.8 2.2L22 18l-2.2.8L19 21l-.8-2.2L16 18l2.2-.8z" />
+      </svg>
+      <span>Fun</span>
+    </button>
+  </nav>
+
+  <!-- ================= MODAL (letters) ================= -->
+  <div class="modal" id="modal" aria-hidden="true" role="dialog" aria-modal="true">
+    <div class="modal-card" id="modalCard">
+      <button class="close-btn" id="modalClose" aria-label="Close">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round">
+          <path d="M6 6l12 12M18 6 6 18" />
+        </svg>
+      </button>
+      <div id="modalContent"></div>
+    </div>
+  </div>
+
+  <!-- ================= LIGHTBOX (photos) ================= -->
+  <div class="lightbox" id="lightbox" aria-hidden="true" role="dialog" aria-modal="true" aria-label="Photo viewer">
+    <button class="close-btn" id="lbClose" aria-label="Close photo">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round">
+        <path d="M6 6l12 12M18 6 6 18" />
+      </svg>
+    </button>
+    <div class="lb-stage">
+      <figure class="lb-frame" style="margin:0">
+        <img id="lbImg" alt="" />
+        <figcaption class="lb-caption">
+          <p id="lbCaption"></p><small id="lbDate"></small>
+        </figcaption>
+      </figure>
+      <div class="lb-controls">
+        <button class="lb-btn" id="lbPrev" aria-label="Previous photo"><svg viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M15 18l-6-6 6-6" />
+          </svg></button>
+        <span class="lb-counter" id="lbCounter">1 / 1</span>
+        <button class="lb-btn" id="lbNext" aria-label="Next photo"><svg viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M9 18l6-6-6-6" />
+          </svg></button>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script>
+    /* ╔══════════════════════════════════════════════════════════════════╗
+       ║                                                                  ║
+       ║      EDIT EVERYTHING HERE                                       ║
+       ║                                                                  ║
+       ║   All text, photos, dates and letters live in OUR_MEMORIES.      ║
+       ║   You never need to touch the HTML/CSS below to customize it.    ║
+       ║                                                                  ║
+       ║   PHOTOS: replace ph("...") with your own image path/URL,     ║
+       ║      e.g.  cover: "photos/month1.jpg"                            ║
+       ║      (put a "photos" folder next to this index.html file)        ║
+       ║                                                                  ║
+       ║   DATES: always use the format "YYYY-MM-DD"                   ║
+       ║                                                                  ║
+       ╚══════════════════════════════════════════════════════════════════╝ */
+
+    // Placeholder image helper — you can delete this once all photos are replaced.
+    const ph = (text, w = 600, h = 600) =>
+      `https://placehold.co/${w}x${h}/E2F0CB/2C3E35?text=${encodeURIComponent(text)}&font=playfair-display`;
+
+    const OUR_MEMORIES = {
+
+      // ─── THE BASICS ──────────────────────────────────────────────
+      startDate: "2026-01-18",            // OUR ANNIVERSARY START DATE (YYYY-MM-DD) — when she became your gf (Jan 18, 2026)
+      myName: "Dray",
+      herName: "Justinne",
+
+      // ─── INTRO / LOADING SCREEN ──────────────────────────────────
+      intro: {
+        text: "dray x jnstiuue",           // typed out on the green loading screen
+        subtitle: "a little scrapbook of us",
+        autoOpenAfterMs: 0,                // 0 = wait for the button. e.g. 3000 = auto-open 3s after typing finishes
+      },
+
+      // ─── MUSIC ───────────────────────────────────────────────────
+      music: {
+        src: "music/The 1975 - About You (Official).mp3",
+        title: "Our Song",
+        artist: "tap to play",
+        volume: 0.2,
+        playOnOpen: true,
+      },
+
+      // ─── HOME ────────────────────────────────────────────────────
+      home: {
+        eyebrow: "Welcome home, Bab!",
+        subtitle: "I made this little corner of the internet just for you, so you can scroll through every month, every silly moment, and every reason I'm so lucky to have you.",
+        heroPhoto: "photos/ourphoto.png",
+        sticker: "you & me",
+        loveNote: "Out of all the people in this whole wide world, I'm so happy it's you I get to annoy, adore, and hold hands with. Thank you for choosing me, every single day.",
+        loveNoteSignature: "— yours always, Dray",
+      },
+
+      // ─── MONTHSARIES (Month 1 → Month 12) ────────────────────────
+      //   date:    the monthsary date (YYYY-MM-DD)
+      //   emoji:   shown on top of the letter
+      //   cover:   photo on the front of the card
+      //   message: the letter. Use a blank line between paragraphs.
+      //   photos:  extra photos inside the letter (add as many as you like)
+      lockFutureMonths: true,              // true = months whose date hasn't arrived yet stay locked 
+      monthsaries: [
+        {
+          month: 1, date: "2026-02-18", title: "The Beginning of Us",
+          cover: "photos/cover/cover1month.jpg",
+          message: `Happy first monthsary, my love!
+
+One month ago on January 18, you officially became my girlfriend. I was just a guy with a huge crush on you, and now I get to call you mine. I still can't believe how lucky I am.
+
+Thank you for saying yes, for every late night conversation, and for making ordinary days feel like little adventures. Here's to our very first month!`,
+          photos: ["photos/Month1/month1a.jpg", "photos/Month1/month1b.jpg", "photos/Month1/month1c.jpg"],
+        },
+        {
+          month: 2, date: "2026-03-18", title: "Blooming Together",
+          cover: "photos/cover/cover2month.jpg",
+          message: `Two months with you, and everything already feels brighter.
+
+I love how comfortable we've become, but also how my heart still does a little skip every time your name pops up on my phone.
+
+Thank you for being so patient, so sweet, and so uniquely you.`,
+          photos: ["photos/Month2/month2a.jpg", "photos/Month2/month2b.jpg", "photos/Month2/month2c.jpg"],
+        },
+        {
+          month: 3, date: "2026-04-18", title: "Spring Days & Drives",
+          cover: "photos/cover/cover3month.jpg",
+          message: `Three months already!
+
+Thank you for all the food trips, watching movies together, and for always letting me hold your hand.
+
+Every little adventure with you turns into my new favorite memory.`,
+          photos: ["photos/Month3/month3a.jpg", "photos/Month3/month3b.jpg", "photos/Month3/month3c.jpg"],
+        },
+        {
+          month: 4, date: "2026-05-18", title: "Sunny Smiles",
+          cover: "photos/cover/cover4month.jpg",
+          message: `Four months with my sunshine!
+
+Summer is in full swing, but honestly you outshine the sun any day.
+
+Thank you for always finding ways to make me laugh, even on my most stressful days. You make life so light and happy.`,
+          photos: ["photos/Month4/month4a.jpg", "photos/Month4/month4b.jpg", "photos/Month4/month4c.jpg"],
+        },
+        {
+          month: 5, date: "2026-06-18", title: "Rainy Day Cuddles",
+          cover: "photos/cover/cover5month.jpg",
+          message: `Five months! Rainy days are here, which means the best excuse to stay in and cuddle.
+
+I love our quiet moments the most: you scrolling on your phone, me just admiring you, pretending I'm looking at something else.
+
+Home isn't a place anymore. It's you.`,
+          photos: ["photos/Month5/month5a.jpg", "photos/Month5/month5b.jpg", "photos/Month5/month5c.jpg"],
+        },
+        {
+          month: 6, date: "2026-07-18", title: "Half a Year of Us",
+          cover: "photos/cover/cover6month.jpg",
+          message: `Six months! Half a whole year of being yours.
+
+We've had our sweet days and our challenging days, and I'd choose every single one of them again as long as they're with you.
+
+You make me want to be a better man. I'm so proud of us.`,
+          photos: ["photos/Month6/month6a.jpg", "photos/Month6/month6b.jpg", "photos/Month6/month6c.jpg"],
+        },
+        {
+          month: 7, date: "2026-08-18", title: "Little Inside Jokes",
+          cover: "photos/cover/cover7month.jpg",
+          message: `Seven months of inside jokes nobody else understands.
+
+I love that you laugh at my corniest jokes, and I love that you're weird with me. "bazalrighttt!"
+
+Never stop being my favorite person to be weird with.`,
+          photos: ["photos/Month7/month7a.jpg", "photos/Month7/month7b.jpg", "photos/Month7/month7c.jpg"],
+        },
+        {
+          month: 8, date: "2026-09-18", title: "Growing Up Together",
+          cover: "photos/cover/cover8month.jpg",
+          message: `Eight months! We keep growing together, and somehow I fall for every new little thing I discover about you.
+
+Thank you for listening to my chikas, for sharing your thoughts, and for trusting me with your heart.
+
+Loving you is the best decision I've ever made.`,
+          photos: ["photos/ourphoto1.jpg", "photos/Month8/month8b.jpg", "photos/Month8/month8c.jpg"],
+        },
+        {
+          month: 9, date: "2026-10-18", title: "Best Birthday Gift",
+          cover: "photos/cover/cover9month.jpg",
+          message: `Nine months! Three-quarters of a year together.
+
+It's my birth month, and having you as my girlfriend is the best gift I could ever ask for.
+
+I love you so much, and I'm so grateful to have you in my life.`,
+          photos: ["photos/Month9/month9a.jpg", "photos/Month9/month9b.jpg", "photos/Month9/month9c.jpg"],
+        },
+        {
+          month: 10, date: "2026-11-18", title: "Double Digits & Grateful",
+          cover: "photos/cover/unavailable.jpg",
+          message: `Ten months! Double digits, baby!
+
+This month is all about gratitude, and there is nothing I'm more thankful for than having you by my side.
+
+Thank you for being my constant, my favorite person, and my biggest blessing.`,
+          photos: [ph("Month 10 · A"), ph("Month 10 · B"), ph("Month 10 · C")],
+        },
+        {
+          month: 11, date: "2026-12-18", title: "Our First Holidays",
+          cover: "photos/cover/unavailable.jpg",
+          message: `Eleven months! And the most wonderful time of the year, made a million times better because I have you.
+
+You're the warmest thing about this December. Better than hot chocolate, Christmas lights, and anything under the tree.
+
+One more month until our whole first year together!`,
+          photos: [ph("Month 11 · A"), ph("Month 11 · B"), ph("Month 11 · C")],
+        },
+        {
+          month: 12, date: "2027-01-18", title: "One Whole Year",
+          cover: "photos/cover/unavailable.jpg",
+          message: `HAPPY 1ST ANNIVERSARY, MY LOVE!
+
+365 days since January 18 when you became my girlfriend. Twelve monthsaries of us.
+
+Countless hugs, laughs, food trips, late night calls, and endless 'I love you's.
+
+Thank you for this year. Thank you for choosing me every single day. I love you more than words can say. Here's to forever, starting with year two!`,
+          photos: [ph("Year 1 · A"), ph("Year 1 · B"), ph("Year 1 · C")],
+        },
+      ],
+
+      // ─── MOMENTS SCRAPBOOK (Polaroids) ───────────────────────────
+      //   tags: any of the filter ids below ("dates", "silly", "favorites")
+      //   Different photo sizes are fine. The board arranges itself like a scrapbook.
+      filters: [
+        { id: "all", label: "All" },
+        { id: "dates", label: "Dates" },
+        { id: "silly", label: "Silly" },
+        { id: "favorites", label: "Favorites" },
+      ],
+      moments: [
+        { src: ph("Moment 1", 600, 600), caption: "the day you became mine", date: "2026-01-18", tags: ["dates", "favorites"] },
+        { src: "photos/moments/valentinesdate.jpg", caption: "our first valentine's date", date: "2026-02-14", tags: ["dates", "favorites"] },
+        { src: ph("Moment 3", 600, 500), caption: "you, mid-laugh. my favorite", date: "2026-03-02", tags: ["favorites"] },
+        { src: ph("Moment 4", 600, 800), caption: "cutie frog pins", date: "2026-03-24", tags: ["silly"] },
+        { src: ph("Moment 5", 600, 600), caption: "coffee date & long talks", date: "2026-04-12", tags: ["dates"] },
+        { src: "photos/moments/greengirl.jpg", caption: "the green girl", date: "2026-10-03", tags: ["silly", "favorites"] },
+        { src: ph("Moment 7", 600, 520), caption: "you stole my fries again", date: "2026-06-15", tags: ["silly"] },
+        { src: "photos/moments/santafe1.jpg", caption: "our first santa fe trip", date: "2026-09-19", tags: ["dates", "favorites"] },
+        { src: ph("Moment 9", 600, 600), caption: "picnic in the park", date: "2026-08-10", tags: ["dates"] },
+        { src: ph("Moment 10", 600, 680), caption: "filter face supremacy", date: "2026-08-25", tags: ["silly"] },
+        { src: ph("Moment 11", 600, 560), caption: "sleepy you is the cutest", date: "2026-09-19", tags: ["favorites"] },
+        { src: ph("Moment 12", 600, 720), caption: "caught you dancing", date: "2026-10-02", tags: ["silly", "favorites"] },
+      ],
+
+      // ─── REASONS WHY I LOVE YOU (the jar) ────────────────────────
+      reasons: [
+        "The way your eyes crinkle when you laugh.",
+        "You make even grocery runs feel like dates.",
+        "You always know when something's wrong, even when I say I'm fine.",
+        "Your hugs fix literally everything.",
+        "You send me food pics like I'm your official taste tester.",
+        "You're the kindest person I know, even to strangers.",
+        "You believe in me more than I believe in myself.",
+        "Your voice is my favorite sound in the world.",
+        "You laugh at my jokes, even the really bad ones.",
+        "You look cute even when you just woke up. Unfair, honestly.",
+        "You remember the tiny things I mention once.",
+        "You're my safe place.",
+        "The way you say my name.",
+        "You're so passionate about the things you love.",
+        "You make me want to be better, every single day.",
+        "You hold my hand like you never want to let go.",
+        "You're beautiful inside and out (mostly inside, but wow, the outside too).",
+        "You handle my moods with so much patience.",
+        "Every moment with you feels like home.",
+        "You turned my ordinary life into my favorite story.",
+        "You're my best friend AND my girlfriend. Jackpot.",
+        "Simply because you're you, and there's no one else like you.",
+      ],
+
+      // ─── OPEN WHEN… ENVELOPES ────────────────────────────────────
+      openWhen: [
+        {
+          label: "you miss me", message: `Hi love. If you're reading this, you miss me, and I promise I miss you more.
+
+Close your eyes and imagine me giving you the tightest hug right now. Can you feel it? That's me.
+
+Text me, call me, send me a hundred hearts. I'm never really far.`,
+        },
+        {
+          label: "you're having a bad day", message: `Hey, my strong girl. Bad days happen, but they don't get to keep you.
+
+You've gotten through every hard day so far, and you'll get through this one too. Drink some water, eat something sweet, and be gentle with yourself.
+
+I'm so proud of you, always. And I'm one call away.`,
+        },
+        {
+          label: "you can't sleep", message: `Can't sleep, huh? Here's a little bedtime story:
+
+Once upon a time, a lucky guy met the most amazing girl. He thought about her every night before falling asleep, and he still does. The end.
+
+Now get cozy, breathe slowly, and dream of us. Goodnight, bab.`,
+        },
+        {
+          label: "you need a laugh", message: `Okay, reminder of the time I [insert our funniest memory here]. Yes, that one. You know the one.
+
+Also: why did the scarecrow get an award? Because he was outstanding in his field. ...I'll see myself out.
+
+Smile, pretty. It's my favorite view.`,
+        },
+      ],
+
+      // ─── FOOTER ──────────────────────────────────────────────────
+      footer: {
+        hand: "made with all my love",
+        text: "for Justinne, from Dray · 2026",
+      },
+    };
+    /* ═══════════════════  END OF CUSTOMIZATION  ═══════════════════ */
+
+
+    (() => {
+      "use strict";
+
+      const C = OUR_MEMORIES;
+      const $ = (s, el = document) => el.querySelector(s);
+      const $$ = (s, el = document) => [...el.querySelectorAll(s)];
+
+      /* ---------- Icons ---------- */
+      const ICONS = {
+        heart: `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 21s-7.6-4.6-10-9.4C.4 8.3 2.4 4 6.4 4c2.3 0 3.8 1.3 5.6 3.4C13.8 5.3 15.3 4 17.6 4c4 0 6 4.3 4.4 7.6C19.6 16.4 12 21 12 21z"/></svg>`,
+        leaf: `<svg viewBox="0 0 24 24" fill="none"><path d="M4 20C4 10 10 4 21 3c-.5 11-7 17-17 17z" fill="currentColor"/><path d="M4 20 14 10" stroke="rgba(255,255,255,.7)" stroke-width="1.4" stroke-linecap="round"/></svg>`,
+        lock: ``,
+      };
+      $$("[data-icon]").forEach(el => el.innerHTML = ICONS[el.dataset.icon] || "");
+
+      /* ---------- Date helpers ---------- */
+      const parseDate = s => { const [y, m, d] = s.split("-").map(Number); return new Date(y, m - 1, d); };
+      const today0 = () => { const n = new Date(); return new Date(n.getFullYear(), n.getMonth(), n.getDate()); };
+      const fmtLong = d => d.toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" });
+      const fmtShort = d => d.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
+      const DAY = 864e5;
+      const daysBetween = (a, b) => Math.round((b - a) / DAY);
+      const ordinal = n => { const s = ["th", "st", "nd", "rd"], v = n % 100; return n + (s[(v - 20) % 10] || s[v] || s[0]); };
+      const monthsBetween = (a, b) => {
+        let m = (b.getFullYear() - a.getFullYear()) * 12 + (b.getMonth() - a.getMonth());
+        if (b.getDate() < a.getDate()) m--;
+        return Math.max(0, m);
+      };
+      const nthMonthsary = (start, n) => {
+        const y = start.getFullYear(), m = start.getMonth() + n;
+        const last = new Date(y, m + 1, 0).getDate();
+        return new Date(y, m, Math.min(start.getDate(), last));
+      };
+      const paragraphs = txt => txt.trim().split(/\n\s*\n/).map(p => `<p>${p.trim().replace(/\n/g, "<br>")}</p>`).join("");
+      const rand = (a, b) => a + Math.random() * (b - a);
+      const shuffle = arr => { for (let i = arr.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1));[arr[i], arr[j]] = [arr[j], arr[i]]; } return arr; };
+
+      const START = parseDate(C.startDate);
+
+      /* ---------- Toast ---------- */
+      let toastTimer;
+      function toast(msg, ms = 3200) {
+        const t = $("#toast");
+        t.textContent = msg;
+        t.classList.add("show");
+        clearTimeout(toastTimer);
+        toastTimer = setTimeout(() => t.classList.remove("show"), ms);
+      }
+
+      /* ---------- Confetti (hearts!) ---------- */
+      let heartShape = null;
+      const CONFETTI_COLORS = ["#9CAF88", "#B5EAD7", "#E2F0CB", "#7A9168", "#F3C9C4", "#FFFFFF"];
+      function burst(x = 0.5, y = 0.6, big = false) {
+        if (typeof confetti !== "function") return;
+        if (!heartShape && confetti.shapeFromPath) {
+          try {
+            heartShape = confetti.shapeFromPath({ path: "M167 72c19,-38 37,-56 75,-56 42,0 76,33 76,75 0,76 -76,151 -151,227 -76,-76 -151,-151 -151,-227 0,-42 33,-75 75,-75 38,0 57,18 76,56z" });
+          } catch (e) { /* fallback to circles */ }
+        }
+        const shapes = heartShape ? [heartShape, heartShape, "circle"] : ["circle"];
+        const base = { origin: { x, y }, colors: CONFETTI_COLORS, shapes, scalar: 1.25, ticks: 240, disableForReducedMotion: true, zIndex: 1200 };
+        confetti({ ...base, particleCount: big ? 110 : 55, spread: big ? 110 : 75, startVelocity: big ? 48 : 36 });
+        if (big) {
+          setTimeout(() => confetti({ ...base, particleCount: 60, angle: 60, spread: 70, origin: { x: 0, y: 0.75 } }), 250);
+          setTimeout(() => confetti({ ...base, particleCount: 60, angle: 120, spread: 70, origin: { x: 1, y: 0.75 } }), 400);
+        }
+      }
+      const burstFrom = (el, big) => {
+        const r = el.getBoundingClientRect();
+        burst((r.left + r.width / 2) / innerWidth, (r.top + r.height / 2) / innerHeight, big);
+      };
+
+      /* ---------- Floating particles ---------- */
+      function spawnParticles(container, count, palette) {
+        for (let i = 0; i < count; i++) {
+          const s = document.createElement("span");
+          s.className = "particle";
+          s.innerHTML = Math.random() < 0.55 ? ICONS.heart : ICONS.leaf;
+          const dur = rand(16, 32);
+          s.style.cssText = `
+        left:${rand(0, 100)}%;
+        --size:${rand(10, 26).toFixed(0)}px;
+        --dur:${dur}s;
+        --delay:${-rand(0, dur)}s;
+        --drift:${rand(-80, 80).toFixed(0)}px;
+        --rot:${rand(-260, 260).toFixed(0)}deg;
+        --o:${rand(.35, .8).toFixed(2)};
+        --c:${palette[Math.floor(Math.random() * palette.length)]};`;
+          container.appendChild(s);
+        }
+      }
+
+      /* ---------- Loader ---------- */
+      let opened = false;
+      function initLoader() {
+        const el = $("#typeText");
+        const text = C.intro.text;
+        $("#loaderSub").textContent = C.intro.subtitle;
+        spawnParticles($("#loaderParticles"), innerWidth < 640 ? 16 : 26, ["rgba(255,255,255,.9)", "#E2F0CB", "#B5EAD7"]);
+
+        let i = 0;
+        const step = () => {
+          if (i < text.length) {
+            el.textContent += text[i++];
+            setTimeout(step, text[i - 1] === " " ? 160 : rand(85, 150));
+          } else {
+            $("#loader").classList.add("typed");
+            if (C.intro.autoOpenAfterMs > 0) setTimeout(openSite, C.intro.autoOpenAfterMs);
+          }
+        };
+        setTimeout(step, 900);
+        $("#openBtn").addEventListener("click", openSite);
+      }
+
+      function openSite() {
+        if (opened) return;
+        opened = true;
+        if (C.music.playOnOpen) playMusic(true);
+        const loader = $("#loader");
+        loader.classList.add("opening");
+        document.body.classList.remove("is-loading");
+        document.body.classList.add("revealed");
+        setTimeout(() => {
+          loader.remove();
+          positionIndicator();
+          animateProgressBars();
+          celebrateIfMonthsary();
+        }, 1300);
+      }
+
+      /* ---------- Navigation ---------- */
+      const VIEWS = ["home", "timeline", "scrapbook", "fun"];
+      let currentView = "home";
+
+      function positionIndicator() {
+        const active = $(".nav-btn.active");
+        const ind = $("#navIndicator");
+        if (!active) return;
+        ind.style.width = active.offsetWidth + "px";
+        ind.style.transform = `translateX(${active.offsetLeft}px)`;
+      }
+
+      function showView(name, updateHash = true) {
+        if (!VIEWS.includes(name)) name = "home";
+        if (name === currentView && updateHash) { window.scrollTo({ top: 0, behavior: "smooth" }); return; }
+        currentView = name;
+        $$(".view").forEach(v => v.classList.toggle("active", v.id === `view-${name}`));
+        $$(".nav-btn").forEach(b => {
+          const on = b.dataset.view === name;
+          b.classList.toggle("active", on);
+          on ? b.setAttribute("aria-current", "page") : b.removeAttribute("aria-current");
+        });
+        positionIndicator();
+        window.scrollTo({ top: 0, behavior: "instant" });
+        if (updateHash) history.replaceState(null, "", `#${name}`);
+        animateProgressBars();
+      }
+
+      function initNav() {
+        $$(".nav-btn").forEach(b => b.addEventListener("click", () => showView(b.dataset.view)));
+        document.addEventListener("click", e => {
+          const g = e.target.closest("[data-goto]");
+          if (g) showView(g.dataset.goto);
+        });
+        window.addEventListener("resize", positionIndicator);
+        window.addEventListener("hashchange", () => showView(location.hash.slice(1), false));
+        const initial = location.hash.slice(1);
+        if (VIEWS.includes(initial)) showView(initial, false);
+        document.fonts && document.fonts.ready.then(positionIndicator);
+      }
+
+      /* ---------- Home ---------- */
+      function initHome() {
+        const h = C.home;
+        $("#heroName").textContent = C.herName;
+        $("#heroSub").textContent = h.subtitle;
+        $("#heroPhoto").src = h.heroPhoto;
+        $("#heroSticker").textContent = h.sticker;
+        $("#loveNote").textContent = h.loveNote;
+        $("#loveNoteSig").textContent = h.loveNoteSignature;
+        $("#brandMe").textContent = C.myName.charAt(0).toUpperCase();
+        $("#brandHer").textContent = C.herName.charAt(0).toUpperCase();
+        $("#footerHand").textContent = C.footer.hand;
+        $("#footerText").textContent = C.footer.text;
+        $("#sinceDate").textContent = fmtLong(START);
+
+        // Eyebrow: special message on monthsary day
+        const t = today0();
+        const n = monthsBetween(START, t);
+        const isMonthsary = n > 0 && nthMonthsary(START, n).getTime() === t.getTime();
+        $("#heroEyebrow").textContent = isMonthsary
+          ? (n % 12 === 0 ? `Happy ${ordinal(n / 12)} Anniversary` : `Happy ${ordinal(n)} Monthsary`)
+          : h.eyebrow;
+
+        // Live counter
+        const tick = () => {
+          const now = new Date();
+          const diff = Math.max(0, now - START);
+          $("#cDays").textContent = Math.floor(diff / DAY).toLocaleString();
+          $("#cMonths").textContent = monthsBetween(START, now).toLocaleString();
+          $("#cHours").textContent = Math.floor(diff / 36e5).toLocaleString();
+          $("#cMinutes").textContent = Math.floor(diff / 6e4).toLocaleString();
+          $("#cSeconds").textContent = Math.floor(diff / 1e3).toLocaleString();
+        };
+        tick();
+        setInterval(tick, 1000);
+
+        // Next monthsary
+        let k = Math.max(1, n);
+        while (nthMonthsary(START, k) < t) k++;
+        const next = nthMonthsary(START, k);
+        const prev = k > 1 ? nthMonthsary(START, k - 1) : START;
+        const left = daysBetween(t, next);
+        if (left === 0) {
+          $("#nextTitle").textContent = `Our ${ordinal(k)} monthsary`;
+          $("#nextDays").textContent = "Today!";
+          $("#nextDate").textContent = fmtLong(next);
+        } else {
+          $("#nextTitle").textContent = `Our ${ordinal(k)} monthsary`;
+          $("#nextDays").textContent = `in ${left} day${left === 1 ? "" : "s"}`;
+          $("#nextDate").textContent = fmtLong(next);
+        }
+        const total = daysBetween(prev, next) || 1;
+        const pct = left === 0 ? 100 : Math.round((daysBetween(prev, t) / total) * 100);
+        $("#monthProgress").dataset.pct = pct;
+        $("#monthProgressLabel").textContent = pct + "%";
+      }
+
+      function animateProgressBars() {
+        requestAnimationFrame(() => {
+          $$("[data-pct]").forEach(el => { el.style.width = "0"; });
+          requestAnimationFrame(() => setTimeout(() => {
+            $$("[data-pct]").forEach(el => { el.style.width = el.dataset.pct + "%"; });
+          }, 150));
+        });
+      }
+
+      function celebrateIfMonthsary() {
+        const t = today0();
+        const n = monthsBetween(START, t);
+        if (n > 0 && nthMonthsary(START, n).getTime() === t.getTime()) {
+          burst(0.5, 0.55, true);
+          toast(n % 12 === 0 ? `Happy ${ordinal(n / 12)} anniversary, ${C.herName}!` : `Happy ${ordinal(n)} monthsary, ${C.herName}!`, 4500);
+        }
+      }
+
+      /* ---------- Monthsary timeline ---------- */
+      function initTimeline() {
+        const grid = $("#monthsGrid");
+        const t = today0();
+        let unlockedCount = 0;
+
+        C.monthsaries.forEach((m, idx) => {
+          const d = parseDate(m.date);
+          const unlocked = !C.lockFutureMonths || d <= t;
+          if (unlocked) unlockedCount++;
+          const num = String(m.month).padStart(2, "0");
+          const card = document.createElement("article");
+          card.className = "flip-card reveal" + (unlocked ? "" : " locked");
+          card.style.setProperty("--i", Math.min(idx, 8) + 2);
+          card.tabIndex = 0;
+          card.setAttribute("role", "button");
+          card.setAttribute("aria-label", `Month ${m.month}: ${m.title}. Tap to flip.`);
+          const daysLeft = daysBetween(t, d);
+          card.innerHTML = `
+        <div class="flip-inner">
+          <div class="flip-face flip-front">
+            <div class="month-photo">
+              <img src="${m.cover}" alt="Month ${m.month} photo" loading="lazy" />
+              <span class="month-badge">Month ${num}</span>
+              <span class="month-heart">${ICONS.heart}</span>
+              ${unlocked ? "" : `<div class="lock-overlay"><span>unlocks in ${daysLeft} day${daysLeft === 1 ? "" : "s"}</span></div>`}
+            </div>
+            <div class="month-info">
+              <div><p class="date">${fmtShort(d)}</p><h3>${m.title}</h3></div>
+              <span class="tap-hint">flip ↻</span>
+            </div>
+          </div>
+          <div class="flip-face flip-back">
+            <span class="num" aria-hidden="true">${num}</span>
+            <span class="chip">Month ${m.month}</span>
+            <h3>${unlocked ? m.title : "Not yet, love!"}</h3>
+            <p class="snippet">${unlocked ? m.message.trim().split("\n")[0] : `Be patient, this letter opens on ${fmtLong(d)}.`}</p>
+            <div class="back-actions">
+              ${unlocked ? `<button class="btn btn-primary" data-letter="${idx}">Read my letter</button>` : ""}
+              <small>tap to flip back</small>
+            </div>
+          </div>
+        </div>`;
+          card.addEventListener("click", e => {
+            const btn = e.target.closest("[data-letter]");
+            if (btn) { e.stopPropagation(); openLetter(+btn.dataset.letter, btn); return; }
+            card.classList.toggle("flipped");
+          });
+          card.addEventListener("keydown", e => {
+            if ((e.key === "Enter" || e.key === " ") && e.target === card) { e.preventDefault(); card.classList.toggle("flipped"); }
+          });
+          grid.appendChild(card);
+        });
+
+        const total = C.monthsaries.length;
+        $("#journeyLabel").textContent = `${unlockedCount} / ${total} celebrated`;
+        $("#journeyBar").dataset.pct = Math.round((unlockedCount / total) * 100);
+      }
+
+      function openLetter(idx, fromEl) {
+        const m = C.monthsaries[idx];
+        const d = parseDate(m.date);
+        const photos = (m.photos || []).map((src, i) =>
+          `<button class="mini-polaroid" style="--r:${[-3, 2, -1.5, 3, -2][i % 5]}deg" data-photo="${i}"><img src="${src}" alt="Month ${m.month} photo ${i + 1}" loading="lazy" /></button>`
+        ).join("");
+        openModal(`
+      <div class="letter">
+        <div class="letter-head">
+          <span class="letter-emoji"></span>
+          <span class="chip">Month ${m.month} · ${fmtLong(d)}</span>
+          <h2>${m.title}</h2>
+        </div>
+        <div class="letter-paper">
+          <div class="letter-body">${paragraphs(m.message)}</div>
+          <p class="signature">With all my love, ${C.myName}</p>
+        </div>
+        ${photos ? `<h3 class="letter-photos-title">Little memories from this month</h3><div class="letter-photos">${photos}</div>` : ""}
+      </div>`);
+        $$("#modalContent [data-photo]").forEach(b => b.addEventListener("click", () => {
+          openLightbox(m.photos.map((src, i) => ({ src, caption: `${m.title} · ${i + 1}`, date: m.date })), +b.dataset.photo);
+        }));
+        if (fromEl) burstFrom(fromEl, false);
+      }
+
+      /* ---------- Modal ---------- */
+      let lastFocus = null;
+      let onModalClose = null;
+      function openModal(html, onClose) {
+        lastFocus = document.activeElement;
+        onModalClose = onClose || null;
+        $("#modalContent").innerHTML = html;
+        $("#modalCard").scrollTop = 0;
+        const m = $("#modal");
+        m.classList.add("open");
+        m.setAttribute("aria-hidden", "false");
+        document.body.classList.add("no-scroll");
+        setTimeout(() => $("#modalClose").focus({ preventScroll: true }), 50);
+      }
+      function closeModal() {
+        const m = $("#modal");
+        if (!m.classList.contains("open")) return;
+        m.classList.remove("open");
+        m.setAttribute("aria-hidden", "true");
+        document.body.classList.remove("no-scroll");
+        if (onModalClose) { onModalClose(); onModalClose = null; }
+        lastFocus && lastFocus.focus && lastFocus.focus({ preventScroll: true });
+      }
+      $("#modalClose").addEventListener("click", closeModal);
+      $("#modal").addEventListener("click", e => { if (e.target.id === "modal") closeModal(); });
+
+      /* ---------- Lightbox ---------- */
+      let lbItems = [], lbIndex = 0;
+      function openLightbox(items, index) {
+        lbItems = items; lbIndex = index;
+        renderLightbox(false);
+        const lb = $("#lightbox");
+        lb.classList.add("open");
+        lb.setAttribute("aria-hidden", "false");
+        document.body.classList.add("no-scroll");
+      }
+      function renderLightbox(animate = true) {
+        const it = lbItems[lbIndex];
+        const img = $("#lbImg");
+        img.src = it.src;
+        img.alt = it.caption || "Photo";
+        $("#lbCaption").textContent = it.caption || "";
+        $("#lbDate").textContent = it.date ? fmtLong(parseDate(it.date)) : "";
+        $("#lbCounter").textContent = `${lbIndex + 1} / ${lbItems.length}`;
+        const multi = lbItems.length > 1;
+        $("#lbPrev").style.visibility = $("#lbNext").style.visibility = multi ? "visible" : "hidden";
+        if (animate) { img.classList.remove("swap"); void img.offsetWidth; img.classList.add("swap"); }
+      }
+      const lbStep = dir => { if (lbItems.length < 2) return; lbIndex = (lbIndex + dir + lbItems.length) % lbItems.length; renderLightbox(); };
+      function closeLightbox() {
+        const lb = $("#lightbox");
+        if (!lb.classList.contains("open")) return;
+        lb.classList.remove("open");
+        lb.setAttribute("aria-hidden", "true");
+        if (!$("#modal").classList.contains("open")) document.body.classList.remove("no-scroll");
+      }
+      $("#lbClose").addEventListener("click", closeLightbox);
+      $("#lbPrev").addEventListener("click", () => lbStep(-1));
+      $("#lbNext").addEventListener("click", () => lbStep(1));
+      $("#lightbox").addEventListener("click", e => { if (e.target.id === "lightbox" || e.target.classList.contains("lb-stage")) closeLightbox(); });
+      let touchX = null;
+      $("#lightbox").addEventListener("touchstart", e => { touchX = e.touches[0].clientX; }, { passive: true });
+      $("#lightbox").addEventListener("touchend", e => {
+        if (touchX === null) return;
+        const dx = e.changedTouches[0].clientX - touchX;
+        if (Math.abs(dx) > 50) lbStep(dx < 0 ? 1 : -1);
+        touchX = null;
+      });
+
+      document.addEventListener("keydown", e => {
+        if ($("#lightbox").classList.contains("open")) {
+          if (e.key === "Escape") closeLightbox();
+          if (e.key === "ArrowRight") lbStep(1);
+          if (e.key === "ArrowLeft") lbStep(-1);
+        } else if (e.key === "Escape") closeModal();
+      });
+
+      /* ---------- Scrapbook ---------- */
+      let activeFilter = "all";
+      function initScrapbook() {
+        const gallery = $("#gallery");
+        const filters = $("#filters");
+
+        C.filters.forEach(f => {
+          const count = f.id === "all" ? C.moments.length : C.moments.filter(m => (m.tags || []).includes(f.id)).length;
+          const b = document.createElement("button");
+          b.className = "filter-btn" + (f.id === "all" ? " active" : "");
+          b.dataset.filter = f.id;
+          b.setAttribute("role", "tab");
+          b.setAttribute("aria-selected", f.id === "all");
+          b.innerHTML = `${f.label}<span class="count">${count}</span>`;
+          b.addEventListener("click", () => applyFilter(f.id));
+          filters.appendChild(b);
+        });
+
+        C.moments.forEach((m, i) => {
+          const fig = document.createElement("figure");
+          fig.className = "polaroid reveal";
+          fig.style.setProperty("--i", Math.min(i, 10) + 2);
+          fig.style.setProperty("--r", `${[-3, 2.2, -1.4, 3.2, -2.4, 1.2, -3.4, 2.6][i % 8]}deg`);
+          fig.style.setProperty("--tape", `${[-4, 3, -2, 5, -5][i % 5]}deg`);
+          fig.dataset.index = i;
+          fig.tabIndex = 0;
+          fig.setAttribute("role", "button");
+          fig.setAttribute("aria-label", `Open photo: ${m.caption}`);
+          const fav = (m.tags || []).includes("favorites");
+          fig.innerHTML = `
+        <img src="${m.src}" alt="${m.caption}" loading="lazy" />
+        ${fav ? `<span class="fav">${ICONS.heart}</span>` : ""}
+        <figcaption>${m.caption}</figcaption>`;
+          const open = () => {
+            const visible = $$(".polaroid:not(.hide)", gallery).map(el => +el.dataset.index);
+            openLightbox(visible.map(k => C.moments[k]), visible.indexOf(i));
+          };
+          fig.addEventListener("click", open);
+          fig.addEventListener("keydown", e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); open(); } });
+          gallery.appendChild(fig);
+        });
+      }
+      function applyFilter(id) {
+        activeFilter = id;
+        $$(".filter-btn").forEach(b => {
+          const on = b.dataset.filter === id;
+          b.classList.toggle("active", on);
+          b.setAttribute("aria-selected", on);
+        });
+        let shown = 0;
+        $$(".polaroid", $("#gallery")).forEach(el => {
+          const m = C.moments[+el.dataset.index];
+          const match = id === "all" || (m.tags || []).includes(id);
+          el.classList.remove("pop", "reveal");
+          el.classList.toggle("hide", !match);
+          if (match) { el.style.setProperty("--d", shown++); void el.offsetWidth; el.classList.add("pop"); }
+        });
+        $("#emptyState").style.display = shown ? "none" : "block";
+      }
+
+      /* ---------- Reasons jar ---------- */
+      function initJar() {
+        const body = $("#jarBody");
+        const colors = ["#9CAF88", "#B5EAD7", "#F3C9C4", "#7A9168", "#E2F0CB", "#FFFFFF"];
+        for (let i = 0; i < 16; i++) {
+          const s = document.createElement("span");
+          s.className = "jar-item";
+          const isHeart = i % 2 === 0;
+          const size = isHeart ? rand(18, 28) : rand(16, 24);
+          s.style.cssText = `left:${rand(8, 78)}%; bottom:${rand(4, 52)}%; width:${size}px; height:${isHeart ? size : size * .7}px;
+        transform:rotate(${rand(-40, 40)}deg); --rr:${rand(-40, 40).toFixed(0)}deg; animation-delay:${-rand(0, 3.5)}s;
+        color:${colors[i % colors.length]};`;
+          if (isHeart) s.innerHTML = ICONS.heart;
+          else { s.classList.add("jar-paper"); s.style.background = colors[(i + 2) % colors.length]; }
+          body.appendChild(s);
+        }
+
+        let bag = [];
+        const seen = new Set();
+        const total = C.reasons.length;
+        const updateCount = () => $("#reasonCount").textContent = `${seen.size} of ${total} reasons discovered${seen.size === total ? " — and counting forever" : ""}`;
+        updateCount();
+
+        const pull = () => {
+          if (!bag.length) bag = shuffle([...Array(total).keys()]);
+          const idx = bag.pop();
+          seen.add(idx);
+          const jar = $("#jar");
+          jar.classList.remove("shake"); void jar.offsetWidth; jar.classList.add("shake");
+          const note = $("#reasonNote");
+          $("#reasonNum").textContent = `Reason #${idx + 1}`;
+          $("#reasonText").textContent = C.reasons[idx];
+          note.classList.remove("pop"); void note.offsetWidth; note.classList.add("pop");
+          updateCount();
+          setTimeout(() => burstFrom(jar, false), 250);
+        };
+        $("#jar").addEventListener("click", pull);
+        $("#reasonBtn").addEventListener("click", pull);
+      }
+
+      /* ---------- Open When envelopes ---------- */
+      function initEnvelopes() {
+        const wrap = $("#envelopes");
+        const KEY = "ourMemories.openedEnvelopes";
+        let openedSet;
+        try { openedSet = new Set(JSON.parse(localStorage.getItem(KEY) || "[]")); } catch { openedSet = new Set(); }
+        const palettes = [
+          { env: "#C8E6B8", dark: "#A9C796", flap: "#B7D8A4" },
+          { env: "#C9EEDF", dark: "#9FD8C2", flap: "#B5EAD7" },
+          { env: "#F1EFE6", dark: "#DCD8C8", flap: "#E8E5D8" },
+          { env: "#B9C9A8", dark: "#97AD85", flap: "#A9BC95" },
+        ];
+        C.openWhen.forEach((o, i) => {
+          const p = palettes[i % palettes.length];
+          const b = document.createElement("button");
+          b.className = "env-card" + (openedSet.has(i) ? " was-opened" : "");
+          b.style.cssText = `--env:${p.env}; --env-dark:${p.dark}; --env-flap:${p.flap};`;
+          b.setAttribute("aria-label", `Open when ${o.label}`);
+          b.innerHTML = `
+        <div class="envelope">
+          <span class="env-back"></span>
+          <span class="env-letter">for you</span>
+          <span class="env-front"></span>
+          <span class="env-flap"></span>
+          <span class="env-seal">${ICONS.heart}</span>
+        </div>
+        <p class="env-label"><span>open when…</span><strong>${o.label}</strong></p>
+        <span class="env-opened">opened</span>`;
+          b.addEventListener("click", () => {
+            if (b.classList.contains("open")) return;
+            b.classList.add("open");
+            setTimeout(() => {
+              burstFrom(b, false);
+              openModal(`
+            <div class="letter">
+              <div class="letter-head">
+                <span class="letter-emoji">${o.emoji || ""}</span>
+                <span class="chip">open when…</span>
+                <h2>${o.label.charAt(0).toUpperCase() + o.label.slice(1)}</h2>
+              </div>
+              <div class="letter-paper">
+                <div class="letter-body">${paragraphs(o.message)}</div>
+                <p class="signature">Love, ${C.myName}</p>
+              </div>
+            </div>`, () => setTimeout(() => b.classList.remove("open"), 300));
+              openedSet.add(i);
+              b.classList.add("was-opened");
+              try { localStorage.setItem(KEY, JSON.stringify([...openedSet])); } catch { /* private mode */ }
+            }, 800);
+          });
+          wrap.appendChild(b);
+        });
+      }
+
+      /* ---------- Music ---------- */
+      const audio = $("#bgMusic");
+      function initMusic() {
+        $("#songTitle").textContent = C.music.title;
+        $("#songArtist").textContent = C.music.artist;
+        if (C.music.src) { audio.src = C.music.src; }
+        audio.volume = Math.min(1, Math.max(0, C.music.volume ?? 0.6));
+        $("#musicBtn").addEventListener("click", () => audio.paused ? playMusic(false) : pauseMusic());
+        audio.addEventListener("pause", () => setPlaying(false));
+        audio.addEventListener("play", () => setPlaying(true));
+      }
+      function setPlaying(on) {
+        $("#musicPlayer").classList.toggle("playing", on);
+        $("#musicBtn").setAttribute("aria-label", on ? "Pause our song" : "Play our song");
+      }
+      function playMusic(silent) {
+        if (!C.music.src) {
+          if (!silent) toast("Add your song in OUR_MEMORIES.music.src");
+          return;
+        }
+        audio.play().catch(() => { if (!silent) toast("Couldn't play the song. Check the file path"); });
+      }
+      function pauseMusic() { audio.pause(); }
+
+      /* ---------- Boot ---------- */
+      spawnParticles($("#bgParticles"), innerWidth < 640 ? 14 : 24, ["#9CAF88", "#B5EAD7", "#C8DDB4", "#F3C9C4"]);
+      initHome();
+      initTimeline();
+      initScrapbook();
+      initJar();
+      initEnvelopes();
+      initMusic();
+      initNav();
+      initLoader();
+    })();
+  </script>
+</body>
+
+</html>
