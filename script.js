@@ -8,6 +8,7 @@ const OUR_MEMORIES = {
   herName: "Justinne",
   brandLeft: "J",
   brandRight: "J",
+  brandTitle: "for justinne",
 
   intro: {
     text: "for justinne <3",
@@ -424,8 +425,9 @@ Smile, pretty. It's my favorite view.`,
     $("#heroSticker").textContent = h.sticker;
     $("#loveNote").textContent = h.loveNote;
     $("#loveNoteSig").textContent = h.loveNoteSignature;
-    $("#brandMe").textContent = C.brandLeft || "J";
-    $("#brandHer").textContent = C.brandRight || "J";
+    if ($("#brandMe")) $("#brandMe").textContent = C.brandLeft || "J";
+    if ($("#brandHer")) $("#brandHer").textContent = C.brandRight || "J";
+    if ($("#brandText")) $("#brandText").textContent = C.brandTitle || "for justinne";
     $("#footerHand").textContent = C.footer.hand;
     $("#footerText").textContent = C.footer.text;
     $("#sinceDate").textContent = fmtLong(START);

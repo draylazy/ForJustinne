@@ -211,6 +211,16 @@ button {
   filter: drop-shadow(0 0 12px rgba(255, 255, 255, .7));
 }
 
+.loader-heart .loader-logo {
+  width: 58px;
+  height: 58px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid rgba(255, 255, 255, .9);
+  animation: heartbeat 1.4s ease-in-out infinite;
+  box-shadow: 0 0 16px rgba(255, 255, 255, .5);
+}
+
 .loader-heart::before,
 .loader-heart::after {
   content: "";
@@ -438,7 +448,7 @@ button {
 .brand {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
   font-family: var(--font-serif);
   font-style: italic;
   font-size: 1.25rem;
@@ -448,6 +458,31 @@ button {
   border: 0;
   cursor: pointer;
   padding: 0;
+  transition: transform .3s var(--ease);
+}
+
+.brand:hover {
+  transform: scale(1.03);
+}
+
+.brand-logo {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid var(--white);
+  box-shadow: 0 2px 8px rgba(44, 62, 53, .16);
+  background: var(--forest);
+  flex-shrink: 0;
+}
+
+.brand-name {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-weight: 600;
+  font-size: 1.25rem;
+  color: var(--forest);
+  letter-spacing: -.01em;
 }
 
 .brand svg {
