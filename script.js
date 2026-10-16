@@ -17,11 +17,47 @@ const OUR_MEMORIES = {
   },
 
   music: {
-    src: "music/The 1975 - About You (Official).mp3",
-    title: "About You",
-    artist: "The 1975",
     volume: 0.2,
     playOnOpen: true,
+    playlist: [
+      {
+        title: "About You",
+        artist: "The 1975",
+        src: "music/The 1975 - About You (Official).mp3",
+        cover: "photos/musiccover/cover1.png",
+      },
+      {
+        title: "Yours",
+        artist: "maye",
+        src: "music/maye - Yours (Official Audio).mp3",
+        cover: "photos/musiccover/cover2.png",
+      },
+      {
+        title: "Iris",
+        artist: "Goo Goo Dolls",
+        src: "music/Goo Goo Dolls - Iris.mp3",
+        cover: "photos/musiccover/cover3.png",
+      },
+      {
+        title: "The Only Exception",
+        artist: "Paramore",
+        src: "music/Paramore - The Only Exception (Audio).mp3",
+        cover: "photos/musiccover/cover4.png",
+      },
+      {
+        title: "Sweet",
+        artist: "Cigarettes After Sex",
+        src: "music/Sweet - Cigarettes After Sex.mp3",
+        cover: "photos/musiccover/cover5.png",
+      },
+      {
+        title: "Bubble Gum",
+        artist: "NewJeans",
+        src: "music/Bubble Gum - NewJeans (Audio).mp3",
+        cover: "photos/musiccover/cover6.png",
+      },
+
+    ],
   },
 
   home: {
@@ -650,6 +686,8 @@ Smile, pretty. It's my favorite view.`,
       if (e.key === "Escape") closeLightbox();
       if (e.key === "ArrowRight") lbStep(1);
       if (e.key === "ArrowLeft") lbStep(-1);
+    } else if ($("#musicModal") && $("#musicModal").classList.contains("open")) {
+      if (e.key === "Escape") closeMusicModal();
     } else if (e.key === "Escape") closeModal();
   });
 
@@ -810,27 +848,267 @@ Smile, pretty. It's my favorite view.`,
 
   // music
   const audio = $("#bgMusic");
+  let currentTrackIdx = 0;
+
+  function fmtTime(sec) {
+    if (!sec || isNaN(sec) || !isFinite(sec)) return "0:00";
+    const m = Math.floor(sec / 60);
+    const s = Math.floor(sec % 60);
+    return `${m}:${s < 10 ? "0" : ""}${s}`;
+  }
+
+  function getPlaylist() {
+    if (Array.isArray(C.music?.playlist) && C.music.playlist.length > 0) {
+      return C.music.playlist;
+    }
+    if (C.music?.src) {
+      return [{ title: C.music.title || "Our Song", artist: C.music.artist || "The 1975", src: C.music.src }];
+    }
+    return [];
+  }
+
+  function renderPlaylist() {
+    const list = getPlaylist();
+    const container = $("#playlistItems");
+    const countEl = $("#playlistCount");
+    if (countEl) countEl.textContent = `${list.length} song${list.length === 1 ? "" : "s"}`;
+    if (!container) return;
+    container.innerHTML = "";
+    list.forEach((t, i) => {
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "playlist-item" + (i === currentTrackIdx ? " active" : "");
+      btn.setAttribute("aria-label", `Play ${t.title}`);
+      const coverSrc = t.cover || t.image || "photos/logo.png";
+      btn.innerHTML = `
+        <div class="playlist-item-left">
+          <img src="${coverSrc}" alt="" class="playlist-item-thumb" loading="lazy" />
+          <div class="playlist-item-info">
+            <span class="playlist-item-title">${i + 1}. ${t.title}</span>
+            <span class="playlist-item-artist">${t.artist || ""}</span>
+          </div>
+        </div>
+        <span class="playlist-item-badge">${i === currentTrackIdx ? (audio && !audio.paused ? "playing" : "selected") : ""}</span>
+      `;
+      btn.addEventListener("click", () => {
+        if (i === currentTrackIdx) {
+          audio.paused ? playMusic(false) : pauseMusic();
+        } else {
+          loadTrack(i, true);
+        }
+      });
+      container.appendChild(btn);
+    });
+  }
+
+  function loadTrack(idx, startPlaying = false) {
+    const list = getPlaylist();
+    if (!list.length) return;
+    currentTrackIdx = (idx + list.length) % list.length;
+    const track = list[currentTrackIdx];
+
+    // Topbar
+    $("#songTitle").textContent = track.title || "Our Song";
+    $("#songArtist").textContent = track.artist || "";
+    const musicBtn = $("#musicBtn");
+    const musicBtnCover = $("#musicBtnCover");
+    const coverUrl = track.cover || track.image || "";
+    if (musicBtn && musicBtnCover) {
+      if (coverUrl) {
+        musicBtnCover.src = coverUrl;
+        musicBtnCover.alt = `${track.title || "Song"} cover`;
+        musicBtn.classList.add("has-cover");
+      } else {
+        musicBtn.classList.remove("has-cover");
+      }
+    }
+
+    // Modal
+    const modalTitle = $("#playerModalTitle");
+    const modalArtist = $("#playerModalArtist");
+    if (modalTitle) modalTitle.textContent = track.title || "Our Song";
+    if (modalArtist) modalArtist.textContent = track.artist || "";
+
+    // Vinyl cover image
+    const vinylAvatar = $("#vinylAvatar");
+    if (vinylAvatar) {
+      vinylAvatar.src = track.cover || track.image || "photos/logo.png";
+      vinylAvatar.alt = `${track.title} cover`;
+    }
+
+    // Reset progress
+    const fill = $("#playerProgressFill");
+    if (fill) fill.style.width = "0%";
+    const curTime = $("#playerCurrentTime");
+    if (curTime) curTime.textContent = "0:00";
+    const totalTime = $("#playerTotalTime");
+    if (totalTime) totalTime.textContent = "0:00";
+
+    renderPlaylist();
+
+    if (track.src && audio.getAttribute("data-src") !== track.src) {
+      audio.src = track.src;
+      audio.setAttribute("data-src", track.src);
+    }
+    if (startPlaying) {
+      playMusic(false);
+    }
+  }
+
+  function openMusicModal() {
+    const m = $("#musicModal");
+    if (!m) return;
+    m.classList.add("open");
+    m.setAttribute("aria-hidden", "false");
+    document.body.classList.add("no-scroll");
+    renderPlaylist();
+  }
+
+  function closeMusicModal() {
+    const m = $("#musicModal");
+    if (!m || !m.classList.contains("open")) return;
+    m.classList.remove("open");
+    m.setAttribute("aria-hidden", "true");
+    if (!$("#modal").classList.contains("open") && !$("#lightbox").classList.contains("open")) {
+      document.body.classList.remove("no-scroll");
+    }
+  }
+
   function initMusic() {
-    $("#songTitle").textContent = C.music.title;
-    $("#songArtist").textContent = C.music.artist;
-    if (C.music.src) { audio.src = C.music.src; }
-    audio.volume = Math.min(1, Math.max(0, C.music.volume ?? 0.6));
-    $("#musicBtn").addEventListener("click", () => audio.paused ? playMusic(false) : pauseMusic());
+    const list = getPlaylist();
+    audio.volume = Math.min(1, Math.max(0, C.music?.volume ?? 0.6));
+    loadTrack(0, false);
+
+    // Clicking topbar music pill opens the music modal
+    const musicPlayer = $("#musicPlayer");
+    if (musicPlayer) {
+      musicPlayer.addEventListener("click", () => {
+        openMusicModal();
+      });
+      musicPlayer.addEventListener("keydown", e => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          openMusicModal();
+        }
+      });
+    }
+
+    // Modal close button and backdrop click
+    const closeBtn = $("#musicModalClose");
+    if (closeBtn) closeBtn.addEventListener("click", closeMusicModal);
+    const musicModal = $("#musicModal");
+    if (musicModal) {
+      musicModal.addEventListener("click", e => {
+        if (e.target.id === "musicModal") closeMusicModal();
+      });
+    }
+
+    // Modal play/pause button
+    const modalPlay = $("#playerModalPlay");
+    if (modalPlay) {
+      modalPlay.addEventListener("click", () => {
+        audio.paused ? playMusic(false) : pauseMusic();
+      });
+    }
+
+    // Modal previous button
+    const modalPrev = $("#playerModalPrev");
+    if (modalPrev) {
+      modalPrev.addEventListener("click", () => {
+        const list = getPlaylist();
+        if (audio.currentTime > 3 || list.length <= 1) {
+          audio.currentTime = 0;
+          playMusic(false);
+        } else {
+          const wasPlaying = !audio.paused;
+          loadTrack(currentTrackIdx - 1, wasPlaying || true);
+          toast("Playing: " + list[currentTrackIdx].title);
+        }
+      });
+    }
+
+    // Modal next button
+    const modalNext = $("#playerModalNext");
+    if (modalNext) {
+      modalNext.addEventListener("click", () => {
+        const list = getPlaylist();
+        if (list.length <= 1) {
+          audio.currentTime = 0;
+          playMusic(false);
+          toast("Looping: " + (list[0]?.title || "Our Song"));
+        } else {
+          const wasPlaying = !audio.paused;
+          loadTrack(currentTrackIdx + 1, wasPlaying || true);
+          toast("Playing: " + list[currentTrackIdx].title);
+        }
+      });
+    }
+
+    // Progress bar seeking
+    const bar = $("#playerProgressBar");
+    if (bar) {
+      bar.addEventListener("click", e => {
+        if (!audio.duration) return;
+        const rect = bar.getBoundingClientRect();
+        const pos = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
+        audio.currentTime = pos * audio.duration;
+      });
+    }
+
+    // Audio timeupdate
+    audio.addEventListener("timeupdate", () => {
+      if (!audio.duration) return;
+      const fill = $("#playerProgressFill");
+      const cur = $("#playerCurrentTime");
+      const tot = $("#playerTotalTime");
+      const pct = (audio.currentTime / audio.duration) * 100;
+      if (fill) fill.style.width = pct + "%";
+      if (cur) cur.textContent = fmtTime(audio.currentTime);
+      if (tot) tot.textContent = fmtTime(audio.duration);
+    });
+
+    audio.addEventListener("loadedmetadata", () => {
+      const tot = $("#playerTotalTime");
+      if (tot && audio.duration) tot.textContent = fmtTime(audio.duration);
+    });
+
+    audio.addEventListener("ended", () => {
+      const list = getPlaylist();
+      if (list.length > 1) {
+        loadTrack(currentTrackIdx + 1, true);
+      } else {
+        audio.currentTime = 0;
+        audio.play().catch(() => { });
+      }
+    });
+
     audio.addEventListener("pause", () => setPlaying(false));
     audio.addEventListener("play", () => setPlaying(true));
   }
+
   function setPlaying(on) {
     $("#musicPlayer").classList.toggle("playing", on);
-    $("#musicBtn").setAttribute("aria-label", on ? "Pause our song" : "Play our song");
+    const modal = $("#musicModal");
+    if (modal) modal.classList.toggle("playing", on);
+    $("#musicBtn").setAttribute("aria-label", on ? "Open music player (playing)" : "Open music player (paused)");
+    renderPlaylist();
   }
+
   function playMusic(silent) {
-    if (!C.music.src) {
-      if (!silent) toast("Add your song in OUR_MEMORIES.music.src");
+    const list = getPlaylist();
+    const track = list[currentTrackIdx];
+    if (!track || !track.src) {
+      if (!silent) toast("Add your song in script.js music.playlist");
       return;
     }
-    audio.play().catch(() => { if (!silent) toast("Couldn't play the song. Check the file path"); });
+    audio.play().catch(() => {
+      if (!silent) toast("Couldn't play song. Check file path");
+    });
   }
-  function pauseMusic() { audio.pause(); }
+
+  function pauseMusic() {
+    audio.pause();
+  }
 
   // init
   spawnParticles($("#bgParticles"), innerWidth < 640 ? 14 : 24, ["#9CAF88", "#B5EAD7", "#C8DDB4", "#F3C9C4"]);

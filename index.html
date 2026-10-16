@@ -45,12 +45,13 @@
   <div class="particles" id="bgParticles" aria-hidden="true"></div>
 
   <!-- ================= MUSIC PLAYER ================= -->
-  <!-- Your song is set in OUR_MEMORIES.music.src (the <audio> tag below is filled in automatically) -->
-  <audio id="bgMusic" loop preload="none">
+  <!-- Your songs are set in OUR_MEMORIES.music.playlist in script.js -->
+  <audio id="bgMusic" preload="none">
     <source src="" type="audio/mpeg" />
   </audio>
-  <div class="music glass" id="musicPlayer">
-    <button class="music-btn" id="musicBtn" aria-label="Play our song">
+  <div class="music glass" id="musicPlayer" role="button" tabindex="0" aria-label="Open music player" title="Open music player">
+    <button class="music-btn has-cover" id="musicBtn" aria-label="Open music player" title="Open music player">
+      <img src="photos/musiccover/cover1.png" alt="Song cover" class="music-btn-cover" id="musicBtnCover" />
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
         stroke-linejoin="round">
         <path d="M9 18V5l11-2v13" />
@@ -59,8 +60,8 @@
       </svg>
     </button>
     <div class="music-meta">
-      <strong id="songTitle">Our Song</strong>
-      <span id="songArtist">tap to play</span><span class="eq" aria-hidden="true"><i></i><i></i><i></i></span>
+      <strong id="songTitle">About You</strong>
+      <span id="songArtist">The 1975</span><span class="eq" aria-hidden="true"><i></i><i></i><i></i></span>
     </div>
   </div>
 
@@ -268,6 +269,76 @@
       <span>Fun</span>
     </button>
   </nav>
+
+  <!-- ================= MUSIC PLAYER MODAL ================= -->
+  <div class="modal music-modal" id="musicModal" aria-hidden="true" role="dialog" aria-modal="true" aria-label="Music player">
+    <div class="modal-card music-modal-card" id="musicModalCard">
+      <button class="close-btn" id="musicModalClose" aria-label="Close music player">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round">
+          <path d="M6 6l12 12M18 6 6 18" />
+        </svg>
+      </button>
+
+      <div class="player-header">
+        <span class="chip">our songs</span>
+        <h2>music player</h2>
+      </div>
+
+      <div class="vinyl-wrap">
+        <div class="vinyl" id="vinylDisc">
+          <img src="photos/logo.png" alt="Song cover" class="vinyl-avatar" id="vinylAvatar" />
+          <div class="vinyl-grooves"></div>
+          <div class="vinyl-center"></div>
+        </div>
+      </div>
+
+      <div class="player-info">
+        <h3 id="playerModalTitle">About You</h3>
+        <p id="playerModalArtist">The 1975</p>
+      </div>
+
+      <div class="player-progress-wrap">
+        <div class="player-progress-bar" id="playerProgressBar" role="slider" aria-label="Song progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" tabindex="0">
+          <div class="player-progress-fill" id="playerProgressFill"></div>
+        </div>
+        <div class="player-times">
+          <span id="playerCurrentTime">0:00</span>
+          <span id="playerTotalTime">0:00</span>
+        </div>
+      </div>
+
+      <div class="player-controls">
+        <button class="player-btn prev" id="playerModalPrev" aria-label="Previous song" title="Previous song">
+          <svg viewBox="0 0 24 24" fill="currentColor">
+            <path d="M6 6h2v12H6zm3.5 6l8.5 6V6z" />
+          </svg>
+        </button>
+        <button class="player-btn play-main" id="playerModalPlay" aria-label="Play or pause" title="Play or pause">
+          <svg class="icon-play" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M8 5v14l11-7z" />
+          </svg>
+          <svg class="icon-pause" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" />
+          </svg>
+        </button>
+        <button class="player-btn next" id="playerModalNext" aria-label="Next song" title="Next song">
+          <svg viewBox="0 0 24 24" fill="currentColor">
+            <path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z" />
+          </svg>
+        </button>
+      </div>
+
+      <div class="playlist-section">
+        <div class="playlist-title">
+          <span>our playlist</span>
+          <span class="playlist-count" id="playlistCount"></span>
+        </div>
+        <div class="playlist-items" id="playlistItems">
+          <!-- Populated dynamically via JS -->
+        </div>
+      </div>
+    </div>
+  </div>
 
   <!-- ================= MODAL (letters) ================= -->
   <div class="modal" id="modal" aria-hidden="true" role="dialog" aria-modal="true">
